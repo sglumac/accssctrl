@@ -1,0 +1,8249 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#
+# Generated Wed Aug 10 21:37:20 2022 by generateDS.py version 2.40.13.
+# Python 3.8.10 (default, Mar 15 2022, 12:22:08)  [GCC 9.4.0]
+#
+# Command line options:
+#   ('-o', 'representation.py')
+#
+# Command line arguments:
+#   /home/sglumac/accssctrl/accssctrl/xacml/xacml3v17.xsd
+#
+# Command line:
+#   /home/sglumac/.local/bin/generateDS.py -o "representation.py" /home/sglumac/accssctrl/accssctrl/xacml/xacml3v17.xsd
+#
+# Current working directory (os.getcwd()):
+#   xacml
+#
+
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
+from six.moves import zip_longest
+import os
+import re as re_
+import base64
+import datetime as datetime_
+import decimal as decimal_
+from lxml import etree as etree_
+
+
+Validate_simpletypes_ = True
+SaveElementTreeNode = True
+TagNamePrefix = ""
+if sys.version_info.major == 2:
+    BaseStrType_ = basestring
+else:
+    BaseStrType_ = str
+
+
+def parsexml_(infile, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    try:
+        if isinstance(infile, os.PathLike):
+            infile = os.path.join(infile)
+    except AttributeError:
+        pass
+    doc = etree_.parse(infile, parser=parser, **kwargs)
+    return doc
+
+def parsexmlstring_(instring, parser=None, **kwargs):
+    if parser is None:
+        # Use the lxml ElementTree compatible parser so that, e.g.,
+        #   we ignore comments.
+        try:
+            parser = etree_.ETCompatXMLParser()
+        except AttributeError:
+            # fallback to xml.etree
+            parser = etree_.XMLParser()
+    element = etree_.fromstring(instring, parser=parser, **kwargs)
+    return element
+
+#
+# Namespace prefix definition table (and other attributes, too)
+#
+# The module generatedsnamespaces, if it is importable, must contain
+# a dictionary named GeneratedsNamespaceDefs.  This Python dictionary
+# should map element type names (strings) to XML schema namespace prefix
+# definitions.  The export method for any class for which there is
+# a namespace prefix definition, will export that definition in the
+# XML representation of that element.  See the export method of
+# any generated element type class for an example of the use of this
+# table.
+# A sample table is:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceDefs = {
+#         "ElementtypeA": "http://www.xxx.com/namespaceA",
+#         "ElementtypeB": "http://www.xxx.com/namespaceB",
+#     }
+#
+# Additionally, the generatedsnamespaces module can contain a python
+# dictionary named GenerateDSNamespaceTypePrefixes that associates element
+# types with the namespace prefixes that are to be added to the
+# "xsi:type" attribute value.  See the _exportAttributes method of
+# any generated element type and the generation of "xsi:type" for an
+# example of the use of this table.
+# An example table:
+#
+#     # File: generatedsnamespaces.py
+#
+#     GenerateDSNamespaceTypePrefixes = {
+#         "ElementtypeC": "aaa:",
+#         "ElementtypeD": "bbb:",
+#     }
+#
+
+try:
+    from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
+except ModulenotfoundExp_ :
+    GenerateDSNamespaceDefs_ = {}
+try:
+    from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
+except ModulenotfoundExp_ :
+    GenerateDSNamespaceTypePrefixes_ = {}
+
+#
+# You can replace the following class definition by defining an
+# importable module named "generatedscollector" containing a class
+# named "GdsCollector".  See the default class definition below for
+# clues about the possible content of that class.
+#
+try:
+    from generatedscollector import GdsCollector as GdsCollector_
+except ModulenotfoundExp_ :
+
+    class GdsCollector_(object):
+
+        def __init__(self, messages=None):
+            if messages is None:
+                self.messages = []
+            else:
+                self.messages = messages
+
+        def add_message(self, msg):
+            self.messages.append(msg)
+
+        def get_messages(self):
+            return self.messages
+
+        def clear_messages(self):
+            self.messages = []
+
+        def print_messages(self):
+            for msg in self.messages:
+                print("Warning: {}".format(msg))
+
+        def write_messages(self, outstream):
+            for msg in self.messages:
+                outstream.write("Warning: {}\n".format(msg))
+
+
+#
+# The super-class for enum types
+#
+
+try:
+    from enum import Enum
+except ModulenotfoundExp_ :
+    Enum = object
+
+#
+# The root super-class for element type classes
+#
+# Calls to the methods in these classes are generated by generateDS.py.
+# You can replace these methods by re-implementing the following class
+#   in a module named generatedssuper.py.
+
+try:
+    from generatedssuper import GeneratedsSuper
+except ModulenotfoundExp_ as exp:
+    try:
+        from generatedssupersuper import GeneratedsSuperSuper
+    except ModulenotfoundExp_ as exp:
+        class GeneratedsSuperSuper(object):
+            pass
+    
+    class GeneratedsSuper(GeneratedsSuperSuper):
+        __hash__ = object.__hash__
+        tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
+        class _FixedOffsetTZ(datetime_.tzinfo):
+            def __init__(self, offset, name):
+                self.__offset = datetime_.timedelta(minutes=offset)
+                self.__name = name
+            def utcoffset(self, dt):
+                return self.__offset
+            def tzname(self, dt):
+                return self.__name
+            def dst(self, dt):
+                return None
+        def __str__(self):
+            settings = {
+                'str_pretty_print': True,
+                'str_indent_level': 0,
+                'str_namespaceprefix': '',
+                'str_name': self.__class__.__name__,
+                'str_namespacedefs': '',
+            }
+            for n in settings:
+                if hasattr(self, n):
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
+            output = StringIO()
+            self.export(
+                output,
+                settings['str_indent_level'],
+                pretty_print=settings['str_pretty_print'],
+                namespaceprefix_=settings['str_namespaceprefix'],
+                name_=settings['str_name'],
+                namespacedef_=settings['str_namespacedefs']
+            )
+            strval = output.getvalue()
+            output.close()
+            return strval
+        def gds_format_string(self, input_data, input_name=''):
+            return input_data
+        def gds_parse_string(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_validate_string(self, input_data, node=None, input_name=''):
+            if not input_data:
+                return ''
+            else:
+                return input_data
+        def gds_format_base64(self, input_data, input_name=''):
+            return base64.b64encode(input_data).decode('ascii')
+        def gds_validate_base64(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_integer(self, input_data, input_name=''):
+            return '%d' % int(input_data)
+        def gds_parse_integer(self, input_data, node=None, input_name=''):
+            try:
+                ival = int(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires integer value: %s' % exp)
+            return ival
+        def gds_validate_integer(self, input_data, node=None, input_name=''):
+            try:
+                value = int(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires integer value')
+            return value
+        def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_integer_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    int(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of integer values')
+            return values
+        def gds_format_float(self, input_data, input_name=''):
+            return ('%.15f' % float(input_data)).rstrip('0')
+        def gds_parse_float(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires float or double value: %s' % exp)
+            return fval_
+        def gds_validate_float(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires float value')
+            return value
+        def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_float_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of float values')
+            return values
+        def gds_format_decimal(self, input_data, input_name=''):
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
+        def gds_parse_decimal(self, input_data, node=None, input_name=''):
+            try:
+                decimal_value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return decimal_value
+        def gds_validate_decimal(self, input_data, node=None, input_name=''):
+            try:
+                value = decimal_.Decimal(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires decimal value')
+            return value
+        def gds_format_decimal_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
+        def gds_validate_decimal_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    decimal_.Decimal(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(node, 'Requires sequence of decimal values')
+            return values
+        def gds_format_double(self, input_data, input_name=''):
+            return '%s' % input_data
+        def gds_parse_double(self, input_data, node=None, input_name=''):
+            try:
+                fval_ = float(input_data)
+            except (TypeError, ValueError) as exp:
+                raise_parse_error(node, 'Requires double or float value: %s' % exp)
+            return fval_
+        def gds_validate_double(self, input_data, node=None, input_name=''):
+            try:
+                value = float(input_data)
+            except (TypeError, ValueError):
+                raise_parse_error(node, 'Requires double or float value')
+            return value
+        def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_double_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise_parse_error(
+                        node, 'Requires sequence of double or float values')
+            return values
+        def gds_format_boolean(self, input_data, input_name=''):
+            return ('%s' % input_data).lower()
+        def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
+            if input_data in ('true', '1'):
+                bval = True
+            elif input_data in ('false', '0'):
+                bval = False
+            else:
+                raise_parse_error(node, 'Requires boolean value')
+            return bval
+        def gds_validate_boolean(self, input_data, node=None, input_name=''):
+            if input_data not in (True, 1, False, 0, ):
+                raise_parse_error(
+                    node,
+                    'Requires boolean value '
+                    '(one of True, 1, False, 0)')
+            return input_data
+        def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return '%s' % ' '.join(input_data)
+        def gds_validate_boolean_list(
+                self, input_data, node=None, input_name=''):
+            values = input_data.split()
+            for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
+                if value not in (True, 1, False, 0, ):
+                    raise_parse_error(
+                        node,
+                        'Requires sequence of boolean values '
+                        '(one of True, 1, False, 0)')
+            return values
+        def gds_validate_datetime(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_datetime(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%04d-%02d-%02dT%02d:%02d:%02d.%s' % (
+                    input_data.year,
+                    input_data.month,
+                    input_data.day,
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        @classmethod
+        def gds_parse_datetime(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            time_parts = input_data.split('.')
+            if len(time_parts) > 1:
+                micro_seconds = int(float('0.' + time_parts[1]) * 1000000)
+                input_data = '%s.%s' % (
+                    time_parts[0], "{}".format(micro_seconds).rjust(6, "0"), )
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(
+                    input_data, '%Y-%m-%dT%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt
+        def gds_validate_date(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_date(self, input_data, input_name=''):
+            _svalue = '%04d-%02d-%02d' % (
+                input_data.year,
+                input_data.month,
+                input_data.day,
+            )
+            try:
+                if input_data.tzinfo is not None:
+                    tzoff = input_data.tzinfo.utcoffset(input_data)
+                    if tzoff is not None:
+                        total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                        if total_seconds == 0:
+                            _svalue += 'Z'
+                        else:
+                            if total_seconds < 0:
+                                _svalue += '-'
+                                total_seconds *= -1
+                            else:
+                                _svalue += '+'
+                            hours = total_seconds // 3600
+                            minutes = (total_seconds - (hours * 3600)) // 60
+                            _svalue += '{0:02d}:{1:02d}'.format(
+                                hours, minutes)
+            except AttributeError:
+                pass
+            return _svalue
+        @classmethod
+        def gds_parse_date(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            dt = datetime_.datetime.strptime(input_data, '%Y-%m-%d')
+            dt = dt.replace(tzinfo=tz)
+            return dt.date()
+        def gds_validate_time(self, input_data, node=None, input_name=''):
+            return input_data
+        def gds_format_time(self, input_data, input_name=''):
+            if input_data.microsecond == 0:
+                _svalue = '%02d:%02d:%02d' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                )
+            else:
+                _svalue = '%02d:%02d:%02d.%s' % (
+                    input_data.hour,
+                    input_data.minute,
+                    input_data.second,
+                    ('%f' % (float(input_data.microsecond) / 1000000))[2:],
+                )
+            if input_data.tzinfo is not None:
+                tzoff = input_data.tzinfo.utcoffset(input_data)
+                if tzoff is not None:
+                    total_seconds = tzoff.seconds + (86400 * tzoff.days)
+                    if total_seconds == 0:
+                        _svalue += 'Z'
+                    else:
+                        if total_seconds < 0:
+                            _svalue += '-'
+                            total_seconds *= -1
+                        else:
+                            _svalue += '+'
+                        hours = total_seconds // 3600
+                        minutes = (total_seconds - (hours * 3600)) // 60
+                        _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
+            return _svalue
+        def gds_validate_simple_patterns(self, patterns, target):
+            # pat is a list of lists of strings/patterns.
+            # The target value must match at least one of the patterns
+            # in order for the test to succeed.
+            found1 = True
+            target = str(target)
+            for patterns1 in patterns:
+                found2 = False
+                for patterns2 in patterns1:
+                    mo = re_.search(patterns2, target)
+                    if mo is not None and len(mo.group(0)) == len(target):
+                        found2 = True
+                        break
+                if not found2:
+                    found1 = False
+                    break
+            return found1
+        @classmethod
+        def gds_parse_time(cls, input_data):
+            tz = None
+            if input_data[-1] == 'Z':
+                tz = GeneratedsSuper._FixedOffsetTZ(0, 'UTC')
+                input_data = input_data[:-1]
+            else:
+                results = GeneratedsSuper.tzoff_pattern.search(input_data)
+                if results is not None:
+                    tzoff_parts = results.group(2).split(':')
+                    tzoff = int(tzoff_parts[0]) * 60 + int(tzoff_parts[1])
+                    if results.group(1) == '-':
+                        tzoff *= -1
+                    tz = GeneratedsSuper._FixedOffsetTZ(
+                        tzoff, results.group(0))
+                    input_data = input_data[:-6]
+            if len(input_data.split('.')) > 1:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S.%f')
+            else:
+                dt = datetime_.datetime.strptime(input_data, '%H:%M:%S')
+            dt = dt.replace(tzinfo=tz)
+            return dt.time()
+        def gds_check_cardinality_(
+                self, value, input_name,
+                min_occurs=0, max_occurs=1, required=None):
+            if value is None:
+                length = 0
+            elif isinstance(value, list):
+                length = len(value)
+            else:
+                length = 1
+            if required is not None :
+                if required and length < 1:
+                    self.gds_collector_.add_message(
+                        "Required value {}{} is missing".format(
+                            input_name, self.gds_get_node_lineno_()))
+            if length < min_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is below "
+                    "the minimum allowed, "
+                    "expected at least {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        min_occurs, length))
+            elif length > max_occurs:
+                self.gds_collector_.add_message(
+                    "Number of values for {}{} is above "
+                    "the maximum allowed, "
+                    "expected at most {}, found {}".format(
+                        input_name, self.gds_get_node_lineno_(),
+                        max_occurs, length))
+        def gds_validate_builtin_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value, input_name=input_name)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_validate_defined_ST_(
+                self, validator, value, input_name,
+                min_occurs=None, max_occurs=None, required=None):
+            if value is not None:
+                try:
+                    validator(value)
+                except GDSParseError as parse_error:
+                    self.gds_collector_.add_message(str(parse_error))
+        def gds_str_lower(self, instring):
+            return instring.lower()
+        def get_path_(self, node):
+            path_list = []
+            self.get_path_list_(node, path_list)
+            path_list.reverse()
+            path = '/'.join(path_list)
+            return path
+        Tag_strip_pattern_ = re_.compile(r'\{.*\}')
+        def get_path_list_(self, node, path_list):
+            if node is None:
+                return
+            tag = GeneratedsSuper.Tag_strip_pattern_.sub('', node.tag)
+            if tag:
+                path_list.append(tag)
+            self.get_path_list_(node.getparent(), path_list)
+        def get_class_obj_(self, node, default_class=None):
+            class_obj1 = default_class
+            if 'xsi' in node.nsmap:
+                classname = node.get('{%s}type' % node.nsmap['xsi'])
+                if classname is not None:
+                    names = classname.split(':')
+                    if len(names) == 2:
+                        classname = names[1]
+                    class_obj2 = globals().get(classname)
+                    if class_obj2 is not None:
+                        class_obj1 = class_obj2
+            return class_obj1
+        def gds_build_any(self, node, type_name=None):
+            # provide default value in case option --disable-xml is used.
+            content = ""
+            content = etree_.tostring(node, encoding="unicode")
+            return content
+        @classmethod
+        def gds_reverse_node_mapping(cls, mapping):
+            return dict(((v, k) for k, v in mapping.items()))
+        @staticmethod
+        def gds_encode(instring):
+            if sys.version_info.major == 2:
+                if ExternalEncoding:
+                    encoding = ExternalEncoding
+                else:
+                    encoding = 'utf-8'
+                return instring.encode(encoding)
+            else:
+                return instring
+        @staticmethod
+        def convert_unicode(instring):
+            if isinstance(instring, str):
+                result = quote_xml(instring)
+            elif sys.version_info.major == 2 and isinstance(instring, unicode):
+                result = quote_xml(instring).encode('utf8')
+            else:
+                result = GeneratedsSuper.gds_encode(str(instring))
+            return result
+        def __eq__(self, other):
+            def excl_select_objs_(obj):
+                return (obj[0] != 'parent_object_' and
+                        obj[0] != 'gds_collector_')
+            if type(self) != type(other):
+                return False
+            return all(x == y for x, y in zip_longest(
+                filter(excl_select_objs_, self.__dict__.items()),
+                filter(excl_select_objs_, other.__dict__.items())))
+        def __ne__(self, other):
+            return not self.__eq__(other)
+        # Django ETL transform hooks.
+        def gds_djo_etl_transform(self):
+            pass
+        def gds_djo_etl_transform_db_obj(self, dbobj):
+            pass
+        # SQLAlchemy ETL transform hooks.
+        def gds_sqa_etl_transform(self):
+            return 0, None
+        def gds_sqa_etl_transform_db_obj(self, dbobj):
+            pass
+        def gds_get_node_lineno_(self):
+            if (hasattr(self, "gds_elementtree_node_") and
+                    self.gds_elementtree_node_ is not None):
+                return ' near line {}'.format(
+                    self.gds_elementtree_node_.sourceline)
+            else:
+                return ""
+    
+    
+    def getSubclassFromModule_(module, class_):
+        '''Get the subclass of a class from a specific module.'''
+        name = class_.__name__ + 'Sub'
+        if hasattr(module, name):
+            return getattr(module, name)
+        else:
+            return None
+
+
+#
+# If you have installed IPython you can uncomment and use the following.
+# IPython is available from http://ipython.scipy.org/.
+#
+
+## from IPython.Shell import IPShellEmbed
+## args = ''
+## ipshell = IPShellEmbed(args,
+##     banner = 'Dropping into IPython',
+##     exit_msg = 'Leaving Interpreter, back to program.')
+
+# Then use the following line where and when you want to drop into the
+# IPython shell:
+#    ipshell('<some message> -- Entering ipshell.\nHit Ctrl-D to exit')
+
+#
+# Globals
+#
+
+ExternalEncoding = ''
+# Set this to false in order to deactivate during export, the use of
+# name space prefixes captured from the input document.
+UseCapturedNS_ = True
+CapturedNsmap_ = {}
+Tag_pattern_ = re_.compile(r'({.*})?(.*)')
+String_cleanup_pat_ = re_.compile(r"[\n\r\s]+")
+Namespace_extract_pat_ = re_.compile(r'{(.*)}(.*)')
+CDATA_pattern_ = re_.compile(r"<!\[CDATA\[.*?\]\]>", re_.DOTALL)
+
+# Change this to redirect the generated superclass module to use a
+# specific subclass module.
+CurrentSubclassModule_ = None
+
+#
+# Support/utility functions.
+#
+
+
+def showIndent(outfile, level, pretty_print=True):
+    if pretty_print:
+        for idx in range(level):
+            outfile.write('    ')
+
+
+def quote_xml(inStr):
+    "Escape markup chars, but do not modify CDATA sections."
+    if not inStr:
+        return ''
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s2 = ''
+    pos = 0
+    matchobjects = CDATA_pattern_.finditer(s1)
+    for mo in matchobjects:
+        s3 = s1[pos:mo.start()]
+        s2 += quote_xml_aux(s3)
+        s2 += s1[mo.start():mo.end()]
+        pos = mo.end()
+    s3 = s1[pos:]
+    s2 += quote_xml_aux(s3)
+    return s2
+
+
+def quote_xml_aux(inStr):
+    s1 = inStr.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    return s1
+
+
+def quote_attrib(inStr):
+    s1 = (isinstance(inStr, BaseStrType_) and inStr or '%s' % inStr)
+    s1 = s1.replace('&', '&amp;')
+    s1 = s1.replace('<', '&lt;')
+    s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
+    if '"' in s1:
+        if "'" in s1:
+            s1 = '"%s"' % s1.replace('"', "&quot;")
+        else:
+            s1 = "'%s'" % s1
+    else:
+        s1 = '"%s"' % s1
+    return s1
+
+
+def quote_python(inStr):
+    s1 = inStr
+    if s1.find("'") == -1:
+        if s1.find('\n') == -1:
+            return "'%s'" % s1
+        else:
+            return "'''%s'''" % s1
+    else:
+        if s1.find('"') != -1:
+            s1 = s1.replace('"', '\\"')
+        if s1.find('\n') == -1:
+            return '"%s"' % s1
+        else:
+            return '"""%s"""' % s1
+
+
+def get_all_text_(node):
+    if node.text is not None:
+        text = node.text
+    else:
+        text = ''
+    for child in node:
+        if child.tail is not None:
+            text += child.tail
+    return text
+
+
+def find_attr_value_(attr_name, node):
+    attrs = node.attrib
+    attr_parts = attr_name.split(':')
+    value = None
+    if len(attr_parts) == 1:
+        value = attrs.get(attr_name)
+    elif len(attr_parts) == 2:
+        prefix, name = attr_parts
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
+        if namespace is not None:
+            value = attrs.get('{%s}%s' % (namespace, name, ))
+    return value
+
+
+def encode_str_2_3(instr):
+    return instr
+
+
+class GDSParseError(Exception):
+    pass
+
+
+def raise_parse_error(node, msg):
+    if node is not None:
+        msg = '%s (element %s/line %d)' % (msg, node.tag, node.sourceline, )
+    raise GDSParseError(msg)
+
+
+class MixedContainer:
+    # Constants for category:
+    CategoryNone = 0
+    CategoryText = 1
+    CategorySimple = 2
+    CategoryComplex = 3
+    # Constants for content_type:
+    TypeNone = 0
+    TypeText = 1
+    TypeString = 2
+    TypeInteger = 3
+    TypeFloat = 4
+    TypeDecimal = 5
+    TypeDouble = 6
+    TypeBoolean = 7
+    TypeBase64 = 8
+    def __init__(self, category, content_type, name, value):
+        self.category = category
+        self.content_type = content_type
+        self.name = name
+        self.value = value
+    def getCategory(self):
+        return self.category
+    def getContenttype(self, content_type):
+        return self.content_type
+    def getValue(self):
+        return self.value
+    def getName(self):
+        return self.name
+    def export(self, outfile, level, name, namespace,
+               pretty_print=True):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                outfile.write(self.value)
+        elif self.category == MixedContainer.CategorySimple:
+            self.exportSimple(outfile, level, name)
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.export(
+                outfile, level, namespace, name_=name,
+                pretty_print=pretty_print)
+    def exportSimple(self, outfile, level, name):
+        if self.content_type == MixedContainer.TypeString:
+            outfile.write('<%s>%s</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeInteger or \
+                self.content_type == MixedContainer.TypeBoolean:
+            outfile.write('<%s>%d</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeFloat or \
+                self.content_type == MixedContainer.TypeDecimal:
+            outfile.write('<%s>%f</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeDouble:
+            outfile.write('<%s>%g</%s>' % (
+                self.name, self.value, self.name))
+        elif self.content_type == MixedContainer.TypeBase64:
+            outfile.write('<%s>%s</%s>' % (
+                self.name,
+                base64.b64encode(self.value),
+                self.name))
+    def to_etree(self, element, mapping_=None, reverse_mapping_=None, nsmap_=None):
+        if self.category == MixedContainer.CategoryText:
+            # Prevent exporting empty content as empty lines.
+            if self.value.strip():
+                if len(element) > 0:
+                    if element[-1].tail is None:
+                        element[-1].tail = self.value
+                    else:
+                        element[-1].tail += self.value
+                else:
+                    if element.text is None:
+                        element.text = self.value
+                    else:
+                        element.text += self.value
+        elif self.category == MixedContainer.CategorySimple:
+            subelement = etree_.SubElement(
+                element, '%s' % self.name)
+            subelement.text = self.to_etree_simple()
+        else:    # category == MixedContainer.CategoryComplex
+            self.value.to_etree(element)
+    def to_etree_simple(self, mapping_=None, reverse_mapping_=None, nsmap_=None):
+        if self.content_type == MixedContainer.TypeString:
+            text = self.value
+        elif (self.content_type == MixedContainer.TypeInteger or
+                self.content_type == MixedContainer.TypeBoolean):
+            text = '%d' % self.value
+        elif (self.content_type == MixedContainer.TypeFloat or
+                self.content_type == MixedContainer.TypeDecimal):
+            text = '%f' % self.value
+        elif self.content_type == MixedContainer.TypeDouble:
+            text = '%g' % self.value
+        elif self.content_type == MixedContainer.TypeBase64:
+            text = '%s' % base64.b64encode(self.value)
+        return text
+    def exportLiteral(self, outfile, level, name):
+        if self.category == MixedContainer.CategoryText:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        elif self.category == MixedContainer.CategorySimple:
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s", "%s"),\n' % (
+                    self.category, self.content_type,
+                    self.name, self.value))
+        else:    # category == MixedContainer.CategoryComplex
+            showIndent(outfile, level)
+            outfile.write(
+                'model_.MixedContainer(%d, %d, "%s",\n' % (
+                    self.category, self.content_type, self.name,))
+            self.value.exportLiteral(outfile, level + 1)
+            showIndent(outfile, level)
+            outfile.write(')\n')
+
+
+class MemberSpec_(object):
+    def __init__(self, name='', data_type='', container=0,
+            optional=0, child_attrs=None, choice=None):
+        self.name = name
+        self.data_type = data_type
+        self.container = container
+        self.child_attrs = child_attrs
+        self.choice = choice
+        self.optional = optional
+    def set_name(self, name): self.name = name
+    def get_name(self): return self.name
+    def set_data_type(self, data_type): self.data_type = data_type
+    def get_data_type_chain(self): return self.data_type
+    def get_data_type(self):
+        if isinstance(self.data_type, list):
+            if len(self.data_type) > 0:
+                return self.data_type[-1]
+            else:
+                return 'xs:string'
+        else:
+            return self.data_type
+    def set_container(self, container): self.container = container
+    def get_container(self): return self.container
+    def set_child_attrs(self, child_attrs): self.child_attrs = child_attrs
+    def get_child_attrs(self): return self.child_attrs
+    def set_choice(self, choice): self.choice = choice
+    def get_choice(self): return self.choice
+    def set_optional(self, optional): self.optional = optional
+    def get_optional(self): return self.optional
+
+
+def _cast(typ, value):
+    if typ is None or value is None:
+        return value
+    return typ(value)
+
+#
+# Data representation classes.
+#
+
+
+class DecisionType_impl(str, Enum):
+    PERMIT='Permit'
+    DENY='Deny'
+    INDETERMINATE='Indeterminate'
+    NOT_APPLICABLE='NotApplicable'
+
+
+class EffectType(str, Enum):
+    PERMIT='Permit'
+    DENY='Deny'
+
+
+class RequestType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ReturnPolicyIdList=None, CombinedDecision=None, RequestDefaults=None, Attributes=None, MultiRequests=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.ReturnPolicyIdList = _cast(bool, ReturnPolicyIdList)
+        self.ReturnPolicyIdList_nsprefix_ = None
+        self.CombinedDecision = _cast(bool, CombinedDecision)
+        self.CombinedDecision_nsprefix_ = None
+        self.RequestDefaults = RequestDefaults
+        self.RequestDefaults_nsprefix_ = "xacml"
+        if Attributes is None:
+            self.Attributes = []
+        else:
+            self.Attributes = Attributes
+        self.Attributes_nsprefix_ = "xacml"
+        self.MultiRequests = MultiRequests
+        self.MultiRequests_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RequestType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RequestType.subclass:
+            return RequestType.subclass(*args_, **kwargs_)
+        else:
+            return RequestType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_RequestDefaults(self):
+        return self.RequestDefaults
+    def set_RequestDefaults(self, RequestDefaults):
+        self.RequestDefaults = RequestDefaults
+    def get_Attributes(self):
+        return self.Attributes
+    def set_Attributes(self, Attributes):
+        self.Attributes = Attributes
+    def add_Attributes(self, value):
+        self.Attributes.append(value)
+    def insert_Attributes_at(self, index, value):
+        self.Attributes.insert(index, value)
+    def replace_Attributes_at(self, index, value):
+        self.Attributes[index] = value
+    def get_MultiRequests(self):
+        return self.MultiRequests
+    def set_MultiRequests(self, MultiRequests):
+        self.MultiRequests = MultiRequests
+    def get_ReturnPolicyIdList(self):
+        return self.ReturnPolicyIdList
+    def set_ReturnPolicyIdList(self, ReturnPolicyIdList):
+        self.ReturnPolicyIdList = ReturnPolicyIdList
+    def get_CombinedDecision(self):
+        return self.CombinedDecision
+    def set_CombinedDecision(self, CombinedDecision):
+        self.CombinedDecision = CombinedDecision
+    def _hasContent(self):
+        if (
+            self.RequestDefaults is not None or
+            self.Attributes or
+            self.MultiRequests is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RequestType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestType'):
+        if self.ReturnPolicyIdList is not None and 'ReturnPolicyIdList' not in already_processed:
+            already_processed.add('ReturnPolicyIdList')
+            outfile.write(' ReturnPolicyIdList="%s"' % self.gds_format_boolean(self.ReturnPolicyIdList, input_name='ReturnPolicyIdList'))
+        if self.CombinedDecision is not None and 'CombinedDecision' not in already_processed:
+            already_processed.add('CombinedDecision')
+            outfile.write(' CombinedDecision="%s"' % self.gds_format_boolean(self.CombinedDecision, input_name='CombinedDecision'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.RequestDefaults is not None:
+            namespaceprefix_ = self.RequestDefaults_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestDefaults_nsprefix_) else ''
+            self.RequestDefaults.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='RequestDefaults', pretty_print=pretty_print)
+        for Attributes_ in self.Attributes:
+            namespaceprefix_ = self.Attributes_nsprefix_ + ':' if (UseCapturedNS_ and self.Attributes_nsprefix_) else ''
+            Attributes_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Attributes', pretty_print=pretty_print)
+        if self.MultiRequests is not None:
+            namespaceprefix_ = self.MultiRequests_nsprefix_ + ':' if (UseCapturedNS_ and self.MultiRequests_nsprefix_) else ''
+            self.MultiRequests.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='MultiRequests', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('ReturnPolicyIdList', node)
+        if value is not None and 'ReturnPolicyIdList' not in already_processed:
+            already_processed.add('ReturnPolicyIdList')
+            if value in ('true', '1'):
+                self.ReturnPolicyIdList = True
+            elif value in ('false', '0'):
+                self.ReturnPolicyIdList = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+        value = find_attr_value_('CombinedDecision', node)
+        if value is not None and 'CombinedDecision' not in already_processed:
+            already_processed.add('CombinedDecision')
+            if value in ('true', '1'):
+                self.CombinedDecision = True
+            elif value in ('false', '0'):
+                self.CombinedDecision = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'RequestDefaults':
+            obj_ = RequestDefaultsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RequestDefaults = obj_
+            obj_.original_tagname_ = 'RequestDefaults'
+        elif nodeName_ == 'Attributes':
+            obj_ = AttributesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Attributes.append(obj_)
+            obj_.original_tagname_ = 'Attributes'
+        elif nodeName_ == 'MultiRequests':
+            obj_ = MultiRequestsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.MultiRequests = obj_
+            obj_.original_tagname_ = 'MultiRequests'
+# end class RequestType
+
+
+class RequestDefaultsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, XPathVersion=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.XPathVersion = XPathVersion
+        self.XPathVersion_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RequestDefaultsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RequestDefaultsType.subclass:
+            return RequestDefaultsType.subclass(*args_, **kwargs_)
+        else:
+            return RequestDefaultsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_XPathVersion(self):
+        return self.XPathVersion
+    def set_XPathVersion(self, XPathVersion):
+        self.XPathVersion = XPathVersion
+    def _hasContent(self):
+        if (
+            self.XPathVersion is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestDefaultsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestDefaultsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RequestDefaultsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestDefaultsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestDefaultsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestDefaultsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestDefaultsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.XPathVersion is not None:
+            namespaceprefix_ = self.XPathVersion_nsprefix_ + ':' if (UseCapturedNS_ and self.XPathVersion_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sXPathVersion>%s</%sXPathVersion>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.XPathVersion), input_name='XPathVersion')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'XPathVersion':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'XPathVersion')
+            value_ = self.gds_validate_string(value_, node, 'XPathVersion')
+            self.XPathVersion = value_
+            self.XPathVersion_nsprefix_ = child_.prefix
+# end class RequestDefaultsType
+
+
+class ResponseType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Result=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if Result is None:
+            self.Result = []
+        else:
+            self.Result = Result
+        self.Result_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ResponseType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ResponseType.subclass:
+            return ResponseType.subclass(*args_, **kwargs_)
+        else:
+            return ResponseType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Result(self):
+        return self.Result
+    def set_Result(self, Result):
+        self.Result = Result
+    def add_Result(self, value):
+        self.Result.append(value)
+    def insert_Result_at(self, index, value):
+        self.Result.insert(index, value)
+    def replace_Result_at(self, index, value):
+        self.Result[index] = value
+    def _hasContent(self):
+        if (
+            self.Result
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ResponseType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ResponseType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ResponseType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Result_ in self.Result:
+            namespaceprefix_ = self.Result_nsprefix_ + ':' if (UseCapturedNS_ and self.Result_nsprefix_) else ''
+            Result_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Result', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Result':
+            obj_ = ResultType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Result.append(obj_)
+            obj_.original_tagname_ = 'Result'
+# end class ResponseType
+
+
+class ContentType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, anytypeobjs_=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.anytypeobjs_ = anytypeobjs_
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ContentType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ContentType.subclass:
+            return ContentType.subclass(*args_, **kwargs_)
+        else:
+            return ContentType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_anytypeobjs_(self): return self.anytypeobjs_
+    def set_anytypeobjs_(self, anytypeobjs_): self.anytypeobjs_ = anytypeobjs_
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            self.anytypeobjs_ is not None or
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='ContentType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ContentType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ContentType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ContentType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ContentType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ContentType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='ContentType', fromsubclass_=False, pretty_print=True):
+        if not fromsubclass_:
+            for item_ in self.content_:
+                item_.export(outfile, level, item_.name, namespaceprefix_, pretty_print=pretty_print)
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if not fromsubclass_:
+            if self.anytypeobjs_ is not None:
+                content_ = self.anytypeobjs_
+                outfile.write(content_)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == '':
+            obj_ = __ANY__.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, '', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_'):
+              self.add_(obj_.value)
+            elif hasattr(self, 'set_'):
+              self.set_(obj_.value)
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+# end class ContentType
+
+
+class ResultType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Decision=None, Status=None, Obligations=None, AssociatedAdvice=None, Attributes=None, PolicyIdentifierList=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Decision = Decision
+        self.Decision_nsprefix_ = "xacml"
+        self.Status = Status
+        self.Status_nsprefix_ = "xacml"
+        self.Obligations = Obligations
+        self.Obligations_nsprefix_ = "xacml"
+        self.AssociatedAdvice = AssociatedAdvice
+        self.AssociatedAdvice_nsprefix_ = "xacml"
+        if Attributes is None:
+            self.Attributes = []
+        else:
+            self.Attributes = Attributes
+        self.Attributes_nsprefix_ = "xacml"
+        self.PolicyIdentifierList = PolicyIdentifierList
+        self.PolicyIdentifierList_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ResultType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ResultType.subclass:
+            return ResultType.subclass(*args_, **kwargs_)
+        else:
+            return ResultType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Decision(self):
+        return self.Decision
+    def set_Decision(self, Decision):
+        self.Decision = Decision
+    def get_Status(self):
+        return self.Status
+    def set_Status(self, Status):
+        self.Status = Status
+    def get_Obligations(self):
+        return self.Obligations
+    def set_Obligations(self, Obligations):
+        self.Obligations = Obligations
+    def get_AssociatedAdvice(self):
+        return self.AssociatedAdvice
+    def set_AssociatedAdvice(self, AssociatedAdvice):
+        self.AssociatedAdvice = AssociatedAdvice
+    def get_Attributes(self):
+        return self.Attributes
+    def set_Attributes(self, Attributes):
+        self.Attributes = Attributes
+    def add_Attributes(self, value):
+        self.Attributes.append(value)
+    def insert_Attributes_at(self, index, value):
+        self.Attributes.insert(index, value)
+    def replace_Attributes_at(self, index, value):
+        self.Attributes[index] = value
+    def get_PolicyIdentifierList(self):
+        return self.PolicyIdentifierList
+    def set_PolicyIdentifierList(self, PolicyIdentifierList):
+        self.PolicyIdentifierList = PolicyIdentifierList
+    def _hasContent(self):
+        if (
+            self.Decision is not None or
+            self.Status is not None or
+            self.Obligations is not None or
+            self.AssociatedAdvice is not None or
+            self.Attributes or
+            self.PolicyIdentifierList is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ResultType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResultType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ResultType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResultType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResultType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResultType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ResultType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Decision is not None:
+            namespaceprefix_ = self.Decision_nsprefix_ + ':' if (UseCapturedNS_ and self.Decision_nsprefix_) else ''
+            self.Decision.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Decision', pretty_print=pretty_print)
+        if self.Status is not None:
+            namespaceprefix_ = self.Status_nsprefix_ + ':' if (UseCapturedNS_ and self.Status_nsprefix_) else ''
+            self.Status.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Status', pretty_print=pretty_print)
+        if self.Obligations is not None:
+            namespaceprefix_ = self.Obligations_nsprefix_ + ':' if (UseCapturedNS_ and self.Obligations_nsprefix_) else ''
+            self.Obligations.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Obligations', pretty_print=pretty_print)
+        if self.AssociatedAdvice is not None:
+            namespaceprefix_ = self.AssociatedAdvice_nsprefix_ + ':' if (UseCapturedNS_ and self.AssociatedAdvice_nsprefix_) else ''
+            self.AssociatedAdvice.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AssociatedAdvice', pretty_print=pretty_print)
+        for Attributes_ in self.Attributes:
+            namespaceprefix_ = self.Attributes_nsprefix_ + ':' if (UseCapturedNS_ and self.Attributes_nsprefix_) else ''
+            Attributes_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Attributes', pretty_print=pretty_print)
+        if self.PolicyIdentifierList is not None:
+            namespaceprefix_ = self.PolicyIdentifierList_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyIdentifierList_nsprefix_) else ''
+            self.PolicyIdentifierList.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyIdentifierList', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Decision':
+            obj_ = DecisionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Decision = obj_
+            obj_.original_tagname_ = 'Decision'
+        elif nodeName_ == 'Status':
+            obj_ = StatusType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Status = obj_
+            obj_.original_tagname_ = 'Status'
+        elif nodeName_ == 'Obligations':
+            obj_ = ObligationsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Obligations = obj_
+            obj_.original_tagname_ = 'Obligations'
+        elif nodeName_ == 'AssociatedAdvice':
+            obj_ = AssociatedAdviceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AssociatedAdvice = obj_
+            obj_.original_tagname_ = 'AssociatedAdvice'
+        elif nodeName_ == 'Attributes':
+            obj_ = AttributesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Attributes.append(obj_)
+            obj_.original_tagname_ = 'Attributes'
+        elif nodeName_ == 'PolicyIdentifierList':
+            obj_ = PolicyIdentifierListType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyIdentifierList = obj_
+            obj_.original_tagname_ = 'PolicyIdentifierList'
+# end class ResultType
+
+
+class PolicyIdentifierListType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PolicyIdReference=None, PolicySetIdReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if PolicyIdReference is None:
+            self.PolicyIdReference = []
+        else:
+            self.PolicyIdReference = PolicyIdReference
+        self.PolicyIdReference_nsprefix_ = "xacml"
+        if PolicySetIdReference is None:
+            self.PolicySetIdReference = []
+        else:
+            self.PolicySetIdReference = PolicySetIdReference
+        self.PolicySetIdReference_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicyIdentifierListType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicyIdentifierListType.subclass:
+            return PolicyIdentifierListType.subclass(*args_, **kwargs_)
+        else:
+            return PolicyIdentifierListType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PolicyIdReference(self):
+        return self.PolicyIdReference
+    def set_PolicyIdReference(self, PolicyIdReference):
+        self.PolicyIdReference = PolicyIdReference
+    def add_PolicyIdReference(self, value):
+        self.PolicyIdReference.append(value)
+    def insert_PolicyIdReference_at(self, index, value):
+        self.PolicyIdReference.insert(index, value)
+    def replace_PolicyIdReference_at(self, index, value):
+        self.PolicyIdReference[index] = value
+    def get_PolicySetIdReference(self):
+        return self.PolicySetIdReference
+    def set_PolicySetIdReference(self, PolicySetIdReference):
+        self.PolicySetIdReference = PolicySetIdReference
+    def add_PolicySetIdReference(self, value):
+        self.PolicySetIdReference.append(value)
+    def insert_PolicySetIdReference_at(self, index, value):
+        self.PolicySetIdReference.insert(index, value)
+    def replace_PolicySetIdReference_at(self, index, value):
+        self.PolicySetIdReference[index] = value
+    def _hasContent(self):
+        if (
+            self.PolicyIdReference or
+            self.PolicySetIdReference
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyIdentifierListType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicyIdentifierListType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicyIdentifierListType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicyIdentifierListType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicyIdentifierListType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicyIdentifierListType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyIdentifierListType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for PolicyIdReference_ in self.PolicyIdReference:
+            namespaceprefix_ = self.PolicyIdReference_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyIdReference_nsprefix_) else ''
+            PolicyIdReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyIdReference', pretty_print=pretty_print)
+        for PolicySetIdReference_ in self.PolicySetIdReference:
+            namespaceprefix_ = self.PolicySetIdReference_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicySetIdReference_nsprefix_) else ''
+            PolicySetIdReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicySetIdReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PolicyIdReference':
+            obj_ = IdReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyIdReference.append(obj_)
+            obj_.original_tagname_ = 'PolicyIdReference'
+        elif nodeName_ == 'PolicySetIdReference':
+            obj_ = IdReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicySetIdReference.append(obj_)
+            obj_.original_tagname_ = 'PolicySetIdReference'
+# end class PolicyIdentifierListType
+
+
+class StatusType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, StatusCode=None, StatusMessage=None, StatusDetail=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.StatusCode = StatusCode
+        self.StatusCode_nsprefix_ = "xacml"
+        self.StatusMessage = StatusMessage
+        self.StatusMessage_nsprefix_ = "xacml"
+        self.StatusDetail = StatusDetail
+        self.StatusDetail_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, StatusType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if StatusType.subclass:
+            return StatusType.subclass(*args_, **kwargs_)
+        else:
+            return StatusType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_StatusCode(self):
+        return self.StatusCode
+    def set_StatusCode(self, StatusCode):
+        self.StatusCode = StatusCode
+    def get_StatusMessage(self):
+        return self.StatusMessage
+    def set_StatusMessage(self, StatusMessage):
+        self.StatusMessage = StatusMessage
+    def get_StatusDetail(self):
+        return self.StatusDetail
+    def set_StatusDetail(self, StatusDetail):
+        self.StatusDetail = StatusDetail
+    def _hasContent(self):
+        if (
+            self.StatusCode is not None or
+            self.StatusMessage is not None or
+            self.StatusDetail is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='StatusType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('StatusType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'StatusType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='StatusType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='StatusType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='StatusType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='StatusType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.StatusCode is not None:
+            namespaceprefix_ = self.StatusCode_nsprefix_ + ':' if (UseCapturedNS_ and self.StatusCode_nsprefix_) else ''
+            self.StatusCode.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='StatusCode', pretty_print=pretty_print)
+        if self.StatusMessage is not None:
+            namespaceprefix_ = self.StatusMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.StatusMessage_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sStatusMessage>%s</%sStatusMessage>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StatusMessage), input_name='StatusMessage')), namespaceprefix_ , eol_))
+        if self.StatusDetail is not None:
+            namespaceprefix_ = self.StatusDetail_nsprefix_ + ':' if (UseCapturedNS_ and self.StatusDetail_nsprefix_) else ''
+            self.StatusDetail.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='StatusDetail', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'StatusCode':
+            obj_ = StatusCodeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.StatusCode = obj_
+            obj_.original_tagname_ = 'StatusCode'
+        elif nodeName_ == 'StatusMessage':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'StatusMessage')
+            value_ = self.gds_validate_string(value_, node, 'StatusMessage')
+            self.StatusMessage = value_
+            self.StatusMessage_nsprefix_ = child_.prefix
+        elif nodeName_ == 'StatusDetail':
+            obj_ = StatusDetailType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.StatusDetail = obj_
+            obj_.original_tagname_ = 'StatusDetail'
+# end class StatusType
+
+
+class StatusCodeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Value=None, StatusCode=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Value = _cast(None, Value)
+        self.Value_nsprefix_ = None
+        self.StatusCode = StatusCode
+        self.StatusCode_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, StatusCodeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if StatusCodeType.subclass:
+            return StatusCodeType.subclass(*args_, **kwargs_)
+        else:
+            return StatusCodeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_StatusCode(self):
+        return self.StatusCode
+    def set_StatusCode(self, StatusCode):
+        self.StatusCode = StatusCode
+    def get_Value(self):
+        return self.Value
+    def set_Value(self, Value):
+        self.Value = Value
+    def _hasContent(self):
+        if (
+            self.StatusCode is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='StatusCodeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('StatusCodeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'StatusCodeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='StatusCodeType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='StatusCodeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='StatusCodeType'):
+        if self.Value is not None and 'Value' not in already_processed:
+            already_processed.add('Value')
+            outfile.write(' Value=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Value), input_name='Value')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='StatusCodeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.StatusCode is not None:
+            namespaceprefix_ = self.StatusCode_nsprefix_ + ':' if (UseCapturedNS_ and self.StatusCode_nsprefix_) else ''
+            self.StatusCode.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='StatusCode', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Value', node)
+        if value is not None and 'Value' not in already_processed:
+            already_processed.add('Value')
+            self.Value = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'StatusCode':
+            obj_ = StatusCodeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.StatusCode = obj_
+            obj_.original_tagname_ = 'StatusCode'
+# end class StatusCodeType
+
+
+class StatusDetailType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, anytypeobjs_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if anytypeobjs_ is None:
+            self.anytypeobjs_ = []
+        else:
+            self.anytypeobjs_ = anytypeobjs_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, StatusDetailType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if StatusDetailType.subclass:
+            return StatusDetailType.subclass(*args_, **kwargs_)
+        else:
+            return StatusDetailType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_anytypeobjs_(self): return self.anytypeobjs_
+    def set_anytypeobjs_(self, anytypeobjs_): self.anytypeobjs_ = anytypeobjs_
+    def add_anytypeobjs_(self, value): self.anytypeobjs_.append(value)
+    def insert_anytypeobjs_(self, index, value): self._anytypeobjs_[index] = value
+    def _hasContent(self):
+        if (
+            self.anytypeobjs_
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='StatusDetailType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('StatusDetailType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'StatusDetailType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='StatusDetailType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='StatusDetailType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='StatusDetailType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='StatusDetailType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if not fromsubclass_:
+            for obj_ in self.anytypeobjs_:
+                showIndent(outfile, level, pretty_print)
+                outfile.write(str(obj_))
+                outfile.write('\n')
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        content_ = self.gds_build_any(child_, 'StatusDetailType')
+        self.anytypeobjs_.append(content_)
+# end class StatusDetailType
+
+
+class MissingAttributeDetailType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Category=None, AttributeId=None, DataType=None, Issuer=None, AttributeValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.AttributeId = _cast(None, AttributeId)
+        self.AttributeId_nsprefix_ = None
+        self.DataType = _cast(None, DataType)
+        self.DataType_nsprefix_ = None
+        self.Issuer = _cast(None, Issuer)
+        self.Issuer_nsprefix_ = None
+        if AttributeValue is None:
+            self.AttributeValue = []
+        else:
+            self.AttributeValue = AttributeValue
+        self.AttributeValue_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, MissingAttributeDetailType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if MissingAttributeDetailType.subclass:
+            return MissingAttributeDetailType.subclass(*args_, **kwargs_)
+        else:
+            return MissingAttributeDetailType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeValue(self):
+        return self.AttributeValue
+    def set_AttributeValue(self, AttributeValue):
+        self.AttributeValue = AttributeValue
+    def add_AttributeValue(self, value):
+        self.AttributeValue.append(value)
+    def insert_AttributeValue_at(self, index, value):
+        self.AttributeValue.insert(index, value)
+    def replace_AttributeValue_at(self, index, value):
+        self.AttributeValue[index] = value
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_AttributeId(self):
+        return self.AttributeId
+    def set_AttributeId(self, AttributeId):
+        self.AttributeId = AttributeId
+    def get_DataType(self):
+        return self.DataType
+    def set_DataType(self, DataType):
+        self.DataType = DataType
+    def get_Issuer(self):
+        return self.Issuer
+    def set_Issuer(self, Issuer):
+        self.Issuer = Issuer
+    def _hasContent(self):
+        if (
+            self.AttributeValue
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MissingAttributeDetailType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('MissingAttributeDetailType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'MissingAttributeDetailType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='MissingAttributeDetailType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='MissingAttributeDetailType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='MissingAttributeDetailType'):
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.AttributeId is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            outfile.write(' AttributeId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AttributeId), input_name='AttributeId')), ))
+        if self.DataType is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            outfile.write(' DataType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.DataType), input_name='DataType')), ))
+        if self.Issuer is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            outfile.write(' Issuer=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Issuer), input_name='Issuer')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MissingAttributeDetailType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeValue_ in self.AttributeValue:
+            namespaceprefix_ = self.AttributeValue_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeValue_nsprefix_) else ''
+            AttributeValue_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeValue', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('AttributeId', node)
+        if value is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            self.AttributeId = value
+        value = find_attr_value_('DataType', node)
+        if value is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            self.DataType = value
+        value = find_attr_value_('Issuer', node)
+        if value is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            self.Issuer = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeValue.append(obj_)
+            obj_.original_tagname_ = 'AttributeValue'
+# end class MissingAttributeDetailType
+
+
+class AttributesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Category=None, id=None, Content=None, Attribute=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.id = _cast(None, id)
+        self.id_nsprefix_ = None
+        self.Content = Content
+        self.Content_nsprefix_ = "xacml"
+        if Attribute is None:
+            self.Attribute = []
+        else:
+            self.Attribute = Attribute
+        self.Attribute_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributesType.subclass:
+            return AttributesType.subclass(*args_, **kwargs_)
+        else:
+            return AttributesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Content(self):
+        return self.Content
+    def set_Content(self, Content):
+        self.Content = Content
+    def get_Attribute(self):
+        return self.Attribute
+    def set_Attribute(self, Attribute):
+        self.Attribute = Attribute
+    def add_Attribute(self, value):
+        self.Attribute.append(value)
+    def insert_Attribute_at(self, index, value):
+        self.Attribute.insert(index, value)
+    def replace_Attribute_at(self, index, value):
+        self.Attribute[index] = value
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_id(self):
+        return self.id
+    def set_id(self, id):
+        self.id = id
+    def _hasContent(self):
+        if (
+            self.Content is not None or
+            self.Attribute
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributesType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributesType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributesType'):
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.id is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            outfile.write(' xml:id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.id), input_name='id')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributesType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Content is not None:
+            namespaceprefix_ = self.Content_nsprefix_ + ':' if (UseCapturedNS_ and self.Content_nsprefix_) else ''
+            self.Content.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Content', pretty_print=pretty_print)
+        for Attribute_ in self.Attribute:
+            namespaceprefix_ = self.Attribute_nsprefix_ + ':' if (UseCapturedNS_ and self.Attribute_nsprefix_) else ''
+            Attribute_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Attribute', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('xml:id', node)
+        if value is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            self.id = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Content':
+            obj_ = ContentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Content = obj_
+            obj_.original_tagname_ = 'Content'
+        elif nodeName_ == 'Attribute':
+            obj_ = AttributeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Attribute.append(obj_)
+            obj_.original_tagname_ = 'Attribute'
+# end class AttributesType
+
+
+class AttributeType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AttributeId=None, Issuer=None, IncludeInResult=None, AttributeValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.AttributeId = _cast(None, AttributeId)
+        self.AttributeId_nsprefix_ = None
+        self.Issuer = _cast(None, Issuer)
+        self.Issuer_nsprefix_ = None
+        self.IncludeInResult = _cast(bool, IncludeInResult)
+        self.IncludeInResult_nsprefix_ = None
+        if AttributeValue is None:
+            self.AttributeValue = []
+        else:
+            self.AttributeValue = AttributeValue
+        self.AttributeValue_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeType.subclass:
+            return AttributeType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeValue(self):
+        return self.AttributeValue
+    def set_AttributeValue(self, AttributeValue):
+        self.AttributeValue = AttributeValue
+    def add_AttributeValue(self, value):
+        self.AttributeValue.append(value)
+    def insert_AttributeValue_at(self, index, value):
+        self.AttributeValue.insert(index, value)
+    def replace_AttributeValue_at(self, index, value):
+        self.AttributeValue[index] = value
+    def get_AttributeId(self):
+        return self.AttributeId
+    def set_AttributeId(self, AttributeId):
+        self.AttributeId = AttributeId
+    def get_Issuer(self):
+        return self.Issuer
+    def set_Issuer(self, Issuer):
+        self.Issuer = Issuer
+    def get_IncludeInResult(self):
+        return self.IncludeInResult
+    def set_IncludeInResult(self, IncludeInResult):
+        self.IncludeInResult = IncludeInResult
+    def _hasContent(self):
+        if (
+            self.AttributeValue
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributeType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeType'):
+        if self.AttributeId is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            outfile.write(' AttributeId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AttributeId), input_name='AttributeId')), ))
+        if self.Issuer is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            outfile.write(' Issuer=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Issuer), input_name='Issuer')), ))
+        if self.IncludeInResult is not None and 'IncludeInResult' not in already_processed:
+            already_processed.add('IncludeInResult')
+            outfile.write(' IncludeInResult="%s"' % self.gds_format_boolean(self.IncludeInResult, input_name='IncludeInResult'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeValue_ in self.AttributeValue:
+            namespaceprefix_ = self.AttributeValue_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeValue_nsprefix_) else ''
+            AttributeValue_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeValue', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('AttributeId', node)
+        if value is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            self.AttributeId = value
+        value = find_attr_value_('Issuer', node)
+        if value is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            self.Issuer = value
+        value = find_attr_value_('IncludeInResult', node)
+        if value is not None and 'IncludeInResult' not in already_processed:
+            already_processed.add('IncludeInResult')
+            if value in ('true', '1'):
+                self.IncludeInResult = True
+            elif value in ('false', '0'):
+                self.IncludeInResult = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeValue.append(obj_)
+            obj_.original_tagname_ = 'AttributeValue'
+# end class AttributeType
+
+
+class MultiRequestsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, RequestReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if RequestReference is None:
+            self.RequestReference = []
+        else:
+            self.RequestReference = RequestReference
+        self.RequestReference_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, MultiRequestsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if MultiRequestsType.subclass:
+            return MultiRequestsType.subclass(*args_, **kwargs_)
+        else:
+            return MultiRequestsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_RequestReference(self):
+        return self.RequestReference
+    def set_RequestReference(self, RequestReference):
+        self.RequestReference = RequestReference
+    def add_RequestReference(self, value):
+        self.RequestReference.append(value)
+    def insert_RequestReference_at(self, index, value):
+        self.RequestReference.insert(index, value)
+    def replace_RequestReference_at(self, index, value):
+        self.RequestReference[index] = value
+    def _hasContent(self):
+        if (
+            self.RequestReference
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MultiRequestsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('MultiRequestsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'MultiRequestsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='MultiRequestsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='MultiRequestsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='MultiRequestsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MultiRequestsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for RequestReference_ in self.RequestReference:
+            namespaceprefix_ = self.RequestReference_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestReference_nsprefix_) else ''
+            RequestReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='RequestReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'RequestReference':
+            obj_ = RequestReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RequestReference.append(obj_)
+            obj_.original_tagname_ = 'RequestReference'
+# end class MultiRequestsType
+
+
+class RequestReferenceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AttributesReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if AttributesReference is None:
+            self.AttributesReference = []
+        else:
+            self.AttributesReference = AttributesReference
+        self.AttributesReference_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RequestReferenceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RequestReferenceType.subclass:
+            return RequestReferenceType.subclass(*args_, **kwargs_)
+        else:
+            return RequestReferenceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributesReference(self):
+        return self.AttributesReference
+    def set_AttributesReference(self, AttributesReference):
+        self.AttributesReference = AttributesReference
+    def add_AttributesReference(self, value):
+        self.AttributesReference.append(value)
+    def insert_AttributesReference_at(self, index, value):
+        self.AttributesReference.insert(index, value)
+    def replace_AttributesReference_at(self, index, value):
+        self.AttributesReference[index] = value
+    def _hasContent(self):
+        if (
+            self.AttributesReference
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestReferenceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestReferenceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RequestReferenceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestReferenceType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestReferenceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestReferenceType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RequestReferenceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributesReference_ in self.AttributesReference:
+            namespaceprefix_ = self.AttributesReference_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributesReference_nsprefix_) else ''
+            AttributesReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributesReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributesReference':
+            obj_ = AttributesReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributesReference.append(obj_)
+            obj_.original_tagname_ = 'AttributesReference'
+# end class RequestReferenceType
+
+
+class AttributesReferenceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ReferenceId=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.ReferenceId = _cast(None, ReferenceId)
+        self.ReferenceId_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributesReferenceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributesReferenceType.subclass:
+            return AttributesReferenceType.subclass(*args_, **kwargs_)
+        else:
+            return AttributesReferenceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ReferenceId(self):
+        return self.ReferenceId
+    def set_ReferenceId(self, ReferenceId):
+        self.ReferenceId = ReferenceId
+    def _hasContent(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributesReferenceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributesReferenceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributesReferenceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributesReferenceType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributesReferenceType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributesReferenceType'):
+        if self.ReferenceId is not None and 'ReferenceId' not in already_processed:
+            already_processed.add('ReferenceId')
+            outfile.write(' ReferenceId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ReferenceId), input_name='ReferenceId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributesReferenceType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('ReferenceId', node)
+        if value is not None and 'ReferenceId' not in already_processed:
+            already_processed.add('ReferenceId')
+            self.ReferenceId = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class AttributesReferenceType
+
+
+class ObligationsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Obligation=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if Obligation is None:
+            self.Obligation = []
+        else:
+            self.Obligation = Obligation
+        self.Obligation_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ObligationsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ObligationsType.subclass:
+            return ObligationsType.subclass(*args_, **kwargs_)
+        else:
+            return ObligationsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Obligation(self):
+        return self.Obligation
+    def set_Obligation(self, Obligation):
+        self.Obligation = Obligation
+    def add_Obligation(self, value):
+        self.Obligation.append(value)
+    def insert_Obligation_at(self, index, value):
+        self.Obligation.insert(index, value)
+    def replace_Obligation_at(self, index, value):
+        self.Obligation[index] = value
+    def _hasContent(self):
+        if (
+            self.Obligation
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ObligationsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ObligationsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ObligationsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ObligationsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ObligationsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Obligation_ in self.Obligation:
+            namespaceprefix_ = self.Obligation_nsprefix_ + ':' if (UseCapturedNS_ and self.Obligation_nsprefix_) else ''
+            Obligation_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Obligation', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Obligation':
+            obj_ = ObligationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Obligation.append(obj_)
+            obj_.original_tagname_ = 'Obligation'
+# end class ObligationsType
+
+
+class AssociatedAdviceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Advice=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if Advice is None:
+            self.Advice = []
+        else:
+            self.Advice = Advice
+        self.Advice_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AssociatedAdviceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AssociatedAdviceType.subclass:
+            return AssociatedAdviceType.subclass(*args_, **kwargs_)
+        else:
+            return AssociatedAdviceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Advice(self):
+        return self.Advice
+    def set_Advice(self, Advice):
+        self.Advice = Advice
+    def add_Advice(self, value):
+        self.Advice.append(value)
+    def insert_Advice_at(self, index, value):
+        self.Advice.insert(index, value)
+    def replace_Advice_at(self, index, value):
+        self.Advice[index] = value
+    def _hasContent(self):
+        if (
+            self.Advice
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AssociatedAdviceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AssociatedAdviceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AssociatedAdviceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AssociatedAdviceType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AssociatedAdviceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AssociatedAdviceType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AssociatedAdviceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Advice_ in self.Advice:
+            namespaceprefix_ = self.Advice_nsprefix_ + ':' if (UseCapturedNS_ and self.Advice_nsprefix_) else ''
+            Advice_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Advice', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Advice':
+            obj_ = AdviceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Advice.append(obj_)
+            obj_.original_tagname_ = 'Advice'
+# end class AssociatedAdviceType
+
+
+class ObligationType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ObligationId=None, AttributeAssignment=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.ObligationId = _cast(None, ObligationId)
+        self.ObligationId_nsprefix_ = None
+        if AttributeAssignment is None:
+            self.AttributeAssignment = []
+        else:
+            self.AttributeAssignment = AttributeAssignment
+        self.AttributeAssignment_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ObligationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ObligationType.subclass:
+            return ObligationType.subclass(*args_, **kwargs_)
+        else:
+            return ObligationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeAssignment(self):
+        return self.AttributeAssignment
+    def set_AttributeAssignment(self, AttributeAssignment):
+        self.AttributeAssignment = AttributeAssignment
+    def add_AttributeAssignment(self, value):
+        self.AttributeAssignment.append(value)
+    def insert_AttributeAssignment_at(self, index, value):
+        self.AttributeAssignment.insert(index, value)
+    def replace_AttributeAssignment_at(self, index, value):
+        self.AttributeAssignment[index] = value
+    def get_ObligationId(self):
+        return self.ObligationId
+    def set_ObligationId(self, ObligationId):
+        self.ObligationId = ObligationId
+    def _hasContent(self):
+        if (
+            self.AttributeAssignment
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ObligationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ObligationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ObligationType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ObligationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ObligationType'):
+        if self.ObligationId is not None and 'ObligationId' not in already_processed:
+            already_processed.add('ObligationId')
+            outfile.write(' ObligationId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ObligationId), input_name='ObligationId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeAssignment_ in self.AttributeAssignment:
+            namespaceprefix_ = self.AttributeAssignment_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeAssignment_nsprefix_) else ''
+            AttributeAssignment_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeAssignment', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('ObligationId', node)
+        if value is not None and 'ObligationId' not in already_processed:
+            already_processed.add('ObligationId')
+            self.ObligationId = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeAssignment':
+            obj_ = AttributeAssignmentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeAssignment.append(obj_)
+            obj_.original_tagname_ = 'AttributeAssignment'
+# end class ObligationType
+
+
+class AdviceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AdviceId=None, AttributeAssignment=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.AdviceId = _cast(None, AdviceId)
+        self.AdviceId_nsprefix_ = None
+        if AttributeAssignment is None:
+            self.AttributeAssignment = []
+        else:
+            self.AttributeAssignment = AttributeAssignment
+        self.AttributeAssignment_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AdviceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AdviceType.subclass:
+            return AdviceType.subclass(*args_, **kwargs_)
+        else:
+            return AdviceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeAssignment(self):
+        return self.AttributeAssignment
+    def set_AttributeAssignment(self, AttributeAssignment):
+        self.AttributeAssignment = AttributeAssignment
+    def add_AttributeAssignment(self, value):
+        self.AttributeAssignment.append(value)
+    def insert_AttributeAssignment_at(self, index, value):
+        self.AttributeAssignment.insert(index, value)
+    def replace_AttributeAssignment_at(self, index, value):
+        self.AttributeAssignment[index] = value
+    def get_AdviceId(self):
+        return self.AdviceId
+    def set_AdviceId(self, AdviceId):
+        self.AdviceId = AdviceId
+    def _hasContent(self):
+        if (
+            self.AttributeAssignment
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdviceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AdviceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdviceType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdviceType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdviceType'):
+        if self.AdviceId is not None and 'AdviceId' not in already_processed:
+            already_processed.add('AdviceId')
+            outfile.write(' AdviceId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AdviceId), input_name='AdviceId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeAssignment_ in self.AttributeAssignment:
+            namespaceprefix_ = self.AttributeAssignment_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeAssignment_nsprefix_) else ''
+            AttributeAssignment_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeAssignment', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('AdviceId', node)
+        if value is not None and 'AdviceId' not in already_processed:
+            already_processed.add('AdviceId')
+            self.AdviceId = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeAssignment':
+            obj_ = AttributeAssignmentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeAssignment.append(obj_)
+            obj_.original_tagname_ = 'AttributeAssignment'
+# end class AdviceType
+
+
+class ObligationExpressionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ObligationExpression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if ObligationExpression is None:
+            self.ObligationExpression = []
+        else:
+            self.ObligationExpression = ObligationExpression
+        self.ObligationExpression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ObligationExpressionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ObligationExpressionsType.subclass:
+            return ObligationExpressionsType.subclass(*args_, **kwargs_)
+        else:
+            return ObligationExpressionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ObligationExpression(self):
+        return self.ObligationExpression
+    def set_ObligationExpression(self, ObligationExpression):
+        self.ObligationExpression = ObligationExpression
+    def add_ObligationExpression(self, value):
+        self.ObligationExpression.append(value)
+    def insert_ObligationExpression_at(self, index, value):
+        self.ObligationExpression.insert(index, value)
+    def replace_ObligationExpression_at(self, index, value):
+        self.ObligationExpression[index] = value
+    def _hasContent(self):
+        if (
+            self.ObligationExpression
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationExpressionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ObligationExpressionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ObligationExpressionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ObligationExpressionsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ObligationExpressionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ObligationExpressionsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationExpressionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for ObligationExpression_ in self.ObligationExpression:
+            namespaceprefix_ = self.ObligationExpression_nsprefix_ + ':' if (UseCapturedNS_ and self.ObligationExpression_nsprefix_) else ''
+            ObligationExpression_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='ObligationExpression', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ObligationExpression':
+            obj_ = ObligationExpressionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ObligationExpression.append(obj_)
+            obj_.original_tagname_ = 'ObligationExpression'
+# end class ObligationExpressionsType
+
+
+class AdviceExpressionsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AdviceExpression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if AdviceExpression is None:
+            self.AdviceExpression = []
+        else:
+            self.AdviceExpression = AdviceExpression
+        self.AdviceExpression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AdviceExpressionsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AdviceExpressionsType.subclass:
+            return AdviceExpressionsType.subclass(*args_, **kwargs_)
+        else:
+            return AdviceExpressionsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AdviceExpression(self):
+        return self.AdviceExpression
+    def set_AdviceExpression(self, AdviceExpression):
+        self.AdviceExpression = AdviceExpression
+    def add_AdviceExpression(self, value):
+        self.AdviceExpression.append(value)
+    def insert_AdviceExpression_at(self, index, value):
+        self.AdviceExpression.insert(index, value)
+    def replace_AdviceExpression_at(self, index, value):
+        self.AdviceExpression[index] = value
+    def _hasContent(self):
+        if (
+            self.AdviceExpression
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceExpressionsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdviceExpressionsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AdviceExpressionsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdviceExpressionsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdviceExpressionsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdviceExpressionsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceExpressionsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AdviceExpression_ in self.AdviceExpression:
+            namespaceprefix_ = self.AdviceExpression_nsprefix_ + ':' if (UseCapturedNS_ and self.AdviceExpression_nsprefix_) else ''
+            AdviceExpression_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AdviceExpression', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AdviceExpression':
+            obj_ = AdviceExpressionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdviceExpression.append(obj_)
+            obj_.original_tagname_ = 'AdviceExpression'
+# end class AdviceExpressionsType
+
+
+class ObligationExpressionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ObligationId=None, FulfillOn=None, AttributeAssignmentExpression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.ObligationId = _cast(None, ObligationId)
+        self.ObligationId_nsprefix_ = None
+        self.FulfillOn = _cast(None, FulfillOn)
+        self.FulfillOn_nsprefix_ = None
+        if AttributeAssignmentExpression is None:
+            self.AttributeAssignmentExpression = []
+        else:
+            self.AttributeAssignmentExpression = AttributeAssignmentExpression
+        self.AttributeAssignmentExpression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ObligationExpressionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ObligationExpressionType.subclass:
+            return ObligationExpressionType.subclass(*args_, **kwargs_)
+        else:
+            return ObligationExpressionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeAssignmentExpression(self):
+        return self.AttributeAssignmentExpression
+    def set_AttributeAssignmentExpression(self, AttributeAssignmentExpression):
+        self.AttributeAssignmentExpression = AttributeAssignmentExpression
+    def add_AttributeAssignmentExpression(self, value):
+        self.AttributeAssignmentExpression.append(value)
+    def insert_AttributeAssignmentExpression_at(self, index, value):
+        self.AttributeAssignmentExpression.insert(index, value)
+    def replace_AttributeAssignmentExpression_at(self, index, value):
+        self.AttributeAssignmentExpression[index] = value
+    def get_ObligationId(self):
+        return self.ObligationId
+    def set_ObligationId(self, ObligationId):
+        self.ObligationId = ObligationId
+    def get_FulfillOn(self):
+        return self.FulfillOn
+    def set_FulfillOn(self, FulfillOn):
+        self.FulfillOn = FulfillOn
+    def validate_EffectType(self, value):
+        # Validate type xacml:EffectType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Permit', 'Deny']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on EffectType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+    def _hasContent(self):
+        if (
+            self.AttributeAssignmentExpression
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationExpressionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ObligationExpressionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ObligationExpressionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ObligationExpressionType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ObligationExpressionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ObligationExpressionType'):
+        if self.ObligationId is not None and 'ObligationId' not in already_processed:
+            already_processed.add('ObligationId')
+            outfile.write(' ObligationId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ObligationId), input_name='ObligationId')), ))
+        if self.FulfillOn is not None and 'FulfillOn' not in already_processed:
+            already_processed.add('FulfillOn')
+            outfile.write(' FulfillOn=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.FulfillOn), input_name='FulfillOn')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ObligationExpressionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeAssignmentExpression_ in self.AttributeAssignmentExpression:
+            namespaceprefix_ = self.AttributeAssignmentExpression_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeAssignmentExpression_nsprefix_) else ''
+            AttributeAssignmentExpression_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeAssignmentExpression', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('ObligationId', node)
+        if value is not None and 'ObligationId' not in already_processed:
+            already_processed.add('ObligationId')
+            self.ObligationId = value
+        value = find_attr_value_('FulfillOn', node)
+        if value is not None and 'FulfillOn' not in already_processed:
+            already_processed.add('FulfillOn')
+            self.FulfillOn = value
+            self.validate_EffectType(self.FulfillOn)    # validate type EffectType
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeAssignmentExpression':
+            obj_ = AttributeAssignmentExpressionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeAssignmentExpression.append(obj_)
+            obj_.original_tagname_ = 'AttributeAssignmentExpression'
+# end class ObligationExpressionType
+
+
+class AdviceExpressionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AdviceId=None, AppliesTo=None, AttributeAssignmentExpression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.AdviceId = _cast(None, AdviceId)
+        self.AdviceId_nsprefix_ = None
+        self.AppliesTo = _cast(None, AppliesTo)
+        self.AppliesTo_nsprefix_ = None
+        if AttributeAssignmentExpression is None:
+            self.AttributeAssignmentExpression = []
+        else:
+            self.AttributeAssignmentExpression = AttributeAssignmentExpression
+        self.AttributeAssignmentExpression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AdviceExpressionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AdviceExpressionType.subclass:
+            return AdviceExpressionType.subclass(*args_, **kwargs_)
+        else:
+            return AdviceExpressionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeAssignmentExpression(self):
+        return self.AttributeAssignmentExpression
+    def set_AttributeAssignmentExpression(self, AttributeAssignmentExpression):
+        self.AttributeAssignmentExpression = AttributeAssignmentExpression
+    def add_AttributeAssignmentExpression(self, value):
+        self.AttributeAssignmentExpression.append(value)
+    def insert_AttributeAssignmentExpression_at(self, index, value):
+        self.AttributeAssignmentExpression.insert(index, value)
+    def replace_AttributeAssignmentExpression_at(self, index, value):
+        self.AttributeAssignmentExpression[index] = value
+    def get_AdviceId(self):
+        return self.AdviceId
+    def set_AdviceId(self, AdviceId):
+        self.AdviceId = AdviceId
+    def get_AppliesTo(self):
+        return self.AppliesTo
+    def set_AppliesTo(self, AppliesTo):
+        self.AppliesTo = AppliesTo
+    def validate_EffectType(self, value):
+        # Validate type xacml:EffectType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Permit', 'Deny']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on EffectType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+    def _hasContent(self):
+        if (
+            self.AttributeAssignmentExpression
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceExpressionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdviceExpressionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AdviceExpressionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdviceExpressionType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdviceExpressionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdviceExpressionType'):
+        if self.AdviceId is not None and 'AdviceId' not in already_processed:
+            already_processed.add('AdviceId')
+            outfile.write(' AdviceId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AdviceId), input_name='AdviceId')), ))
+        if self.AppliesTo is not None and 'AppliesTo' not in already_processed:
+            already_processed.add('AppliesTo')
+            outfile.write(' AppliesTo=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AppliesTo), input_name='AppliesTo')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AdviceExpressionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AttributeAssignmentExpression_ in self.AttributeAssignmentExpression:
+            namespaceprefix_ = self.AttributeAssignmentExpression_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeAssignmentExpression_nsprefix_) else ''
+            AttributeAssignmentExpression_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeAssignmentExpression', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('AdviceId', node)
+        if value is not None and 'AdviceId' not in already_processed:
+            already_processed.add('AdviceId')
+            self.AdviceId = value
+        value = find_attr_value_('AppliesTo', node)
+        if value is not None and 'AppliesTo' not in already_processed:
+            already_processed.add('AppliesTo')
+            self.AppliesTo = value
+            self.validate_EffectType(self.AppliesTo)    # validate type EffectType
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeAssignmentExpression':
+            obj_ = AttributeAssignmentExpressionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeAssignmentExpression.append(obj_)
+            obj_.original_tagname_ = 'AttributeAssignmentExpression'
+# end class AdviceExpressionType
+
+
+class AttributeAssignmentExpressionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AttributeId=None, Category=None, Issuer=None, Expression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.AttributeId = _cast(None, AttributeId)
+        self.AttributeId_nsprefix_ = None
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.Issuer = _cast(None, Issuer)
+        self.Issuer_nsprefix_ = None
+        self.Expression = Expression
+        self.Expression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeAssignmentExpressionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeAssignmentExpressionType.subclass:
+            return AttributeAssignmentExpressionType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeAssignmentExpressionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Expression(self):
+        return self.Expression
+    def set_Expression(self, Expression):
+        self.Expression = Expression
+    def get_AttributeId(self):
+        return self.AttributeId
+    def set_AttributeId(self, AttributeId):
+        self.AttributeId = AttributeId
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_Issuer(self):
+        return self.Issuer
+    def set_Issuer(self, Issuer):
+        self.Issuer = Issuer
+    def _hasContent(self):
+        if (
+            self.Expression is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeAssignmentExpressionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeAssignmentExpressionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeAssignmentExpressionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeAssignmentExpressionType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributeAssignmentExpressionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeAssignmentExpressionType'):
+        if self.AttributeId is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            outfile.write(' AttributeId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AttributeId), input_name='AttributeId')), ))
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.Issuer is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            outfile.write(' Issuer=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Issuer), input_name='Issuer')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeAssignmentExpressionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Expression is not None:
+            self.Expression.export(outfile, level, namespaceprefix_, namespacedef_='', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('AttributeId', node)
+        if value is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            self.AttributeId = value
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('Issuer', node)
+        if value is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            self.Issuer = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Expression':
+            type_name_ = child_.attrib.get(
+                '{http://www.w3.org/2001/XMLSchema-instance}type')
+            if type_name_ is None:
+                type_name_ = child_.attrib.get('type')
+            if type_name_ is not None:
+                type_names_ = type_name_.split(':')
+                if len(type_names_) == 1:
+                    type_name_ = type_names_[0]
+                else:
+                    type_name_ = type_names_[1]
+                class_ = globals()["" + type_name_]
+                obj_ = class_.factory()
+                obj_.build(child_, gds_collector_=gds_collector_)
+            else:
+                raise NotImplementedError(
+                    'Class not implemented for <Expression> element')
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Expression'
+        elif nodeName_ == 'VariableReference':
+            obj_ = VariableReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'VariableReference'
+        elif nodeName_ == 'AttributeSelector':
+            obj_ = AttributeSelectorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeSelector'
+        elif nodeName_ == 'AttributeDesignator':
+            obj_ = AttributeDesignatorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeDesignator'
+        elif nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeValue'
+        elif nodeName_ == 'Function':
+            obj_ = FunctionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Function'
+        elif nodeName_ == 'Apply':
+            obj_ = ApplyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Apply'
+# end class AttributeAssignmentExpressionType
+
+
+class PolicySetType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PolicySetId=None, Version=None, PolicyCombiningAlgId=None, MaxDelegationDepth=None, Description=None, PolicyIssuer=None, PolicySetDefaults=None, Target=None, PolicySet=None, Policy=None, PolicySetIdReference=None, PolicyIdReference=None, CombinerParameters=None, PolicyCombinerParameters=None, PolicySetCombinerParameters=None, ObligationExpressions=None, AdviceExpressions=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.PolicySetId = _cast(None, PolicySetId)
+        self.PolicySetId_nsprefix_ = None
+        self.Version = _cast(None, Version)
+        self.Version_nsprefix_ = None
+        self.PolicyCombiningAlgId = _cast(None, PolicyCombiningAlgId)
+        self.PolicyCombiningAlgId_nsprefix_ = None
+        self.MaxDelegationDepth = _cast(int, MaxDelegationDepth)
+        self.MaxDelegationDepth_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = "xacml"
+        self.PolicyIssuer = PolicyIssuer
+        self.PolicyIssuer_nsprefix_ = "xacml"
+        self.PolicySetDefaults = PolicySetDefaults
+        self.PolicySetDefaults_nsprefix_ = "xacml"
+        self.Target = Target
+        self.Target_nsprefix_ = "xacml"
+        if PolicySet is None:
+            self.PolicySet = []
+        else:
+            self.PolicySet = PolicySet
+        self.PolicySet_nsprefix_ = "xacml"
+        if Policy is None:
+            self.Policy = []
+        else:
+            self.Policy = Policy
+        self.Policy_nsprefix_ = "xacml"
+        if PolicySetIdReference is None:
+            self.PolicySetIdReference = []
+        else:
+            self.PolicySetIdReference = PolicySetIdReference
+        self.PolicySetIdReference_nsprefix_ = "xacml"
+        if PolicyIdReference is None:
+            self.PolicyIdReference = []
+        else:
+            self.PolicyIdReference = PolicyIdReference
+        self.PolicyIdReference_nsprefix_ = "xacml"
+        if CombinerParameters is None:
+            self.CombinerParameters = []
+        else:
+            self.CombinerParameters = CombinerParameters
+        self.CombinerParameters_nsprefix_ = "xacml"
+        if PolicyCombinerParameters is None:
+            self.PolicyCombinerParameters = []
+        else:
+            self.PolicyCombinerParameters = PolicyCombinerParameters
+        self.PolicyCombinerParameters_nsprefix_ = "xacml"
+        if PolicySetCombinerParameters is None:
+            self.PolicySetCombinerParameters = []
+        else:
+            self.PolicySetCombinerParameters = PolicySetCombinerParameters
+        self.PolicySetCombinerParameters_nsprefix_ = "xacml"
+        self.ObligationExpressions = ObligationExpressions
+        self.ObligationExpressions_nsprefix_ = "xacml"
+        self.AdviceExpressions = AdviceExpressions
+        self.AdviceExpressions_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicySetType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicySetType.subclass:
+            return PolicySetType.subclass(*args_, **kwargs_)
+        else:
+            return PolicySetType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_PolicyIssuer(self):
+        return self.PolicyIssuer
+    def set_PolicyIssuer(self, PolicyIssuer):
+        self.PolicyIssuer = PolicyIssuer
+    def get_PolicySetDefaults(self):
+        return self.PolicySetDefaults
+    def set_PolicySetDefaults(self, PolicySetDefaults):
+        self.PolicySetDefaults = PolicySetDefaults
+    def get_Target(self):
+        return self.Target
+    def set_Target(self, Target):
+        self.Target = Target
+    def get_PolicySet(self):
+        return self.PolicySet
+    def set_PolicySet(self, PolicySet):
+        self.PolicySet = PolicySet
+    def add_PolicySet(self, value):
+        self.PolicySet.append(value)
+    def insert_PolicySet_at(self, index, value):
+        self.PolicySet.insert(index, value)
+    def replace_PolicySet_at(self, index, value):
+        self.PolicySet[index] = value
+    def get_Policy(self):
+        return self.Policy
+    def set_Policy(self, Policy):
+        self.Policy = Policy
+    def add_Policy(self, value):
+        self.Policy.append(value)
+    def insert_Policy_at(self, index, value):
+        self.Policy.insert(index, value)
+    def replace_Policy_at(self, index, value):
+        self.Policy[index] = value
+    def get_PolicySetIdReference(self):
+        return self.PolicySetIdReference
+    def set_PolicySetIdReference(self, PolicySetIdReference):
+        self.PolicySetIdReference = PolicySetIdReference
+    def add_PolicySetIdReference(self, value):
+        self.PolicySetIdReference.append(value)
+    def insert_PolicySetIdReference_at(self, index, value):
+        self.PolicySetIdReference.insert(index, value)
+    def replace_PolicySetIdReference_at(self, index, value):
+        self.PolicySetIdReference[index] = value
+    def get_PolicyIdReference(self):
+        return self.PolicyIdReference
+    def set_PolicyIdReference(self, PolicyIdReference):
+        self.PolicyIdReference = PolicyIdReference
+    def add_PolicyIdReference(self, value):
+        self.PolicyIdReference.append(value)
+    def insert_PolicyIdReference_at(self, index, value):
+        self.PolicyIdReference.insert(index, value)
+    def replace_PolicyIdReference_at(self, index, value):
+        self.PolicyIdReference[index] = value
+    def get_CombinerParameters(self):
+        return self.CombinerParameters
+    def set_CombinerParameters(self, CombinerParameters):
+        self.CombinerParameters = CombinerParameters
+    def add_CombinerParameters(self, value):
+        self.CombinerParameters.append(value)
+    def insert_CombinerParameters_at(self, index, value):
+        self.CombinerParameters.insert(index, value)
+    def replace_CombinerParameters_at(self, index, value):
+        self.CombinerParameters[index] = value
+    def get_PolicyCombinerParameters(self):
+        return self.PolicyCombinerParameters
+    def set_PolicyCombinerParameters(self, PolicyCombinerParameters):
+        self.PolicyCombinerParameters = PolicyCombinerParameters
+    def add_PolicyCombinerParameters(self, value):
+        self.PolicyCombinerParameters.append(value)
+    def insert_PolicyCombinerParameters_at(self, index, value):
+        self.PolicyCombinerParameters.insert(index, value)
+    def replace_PolicyCombinerParameters_at(self, index, value):
+        self.PolicyCombinerParameters[index] = value
+    def get_PolicySetCombinerParameters(self):
+        return self.PolicySetCombinerParameters
+    def set_PolicySetCombinerParameters(self, PolicySetCombinerParameters):
+        self.PolicySetCombinerParameters = PolicySetCombinerParameters
+    def add_PolicySetCombinerParameters(self, value):
+        self.PolicySetCombinerParameters.append(value)
+    def insert_PolicySetCombinerParameters_at(self, index, value):
+        self.PolicySetCombinerParameters.insert(index, value)
+    def replace_PolicySetCombinerParameters_at(self, index, value):
+        self.PolicySetCombinerParameters[index] = value
+    def get_ObligationExpressions(self):
+        return self.ObligationExpressions
+    def set_ObligationExpressions(self, ObligationExpressions):
+        self.ObligationExpressions = ObligationExpressions
+    def get_AdviceExpressions(self):
+        return self.AdviceExpressions
+    def set_AdviceExpressions(self, AdviceExpressions):
+        self.AdviceExpressions = AdviceExpressions
+    def get_PolicySetId(self):
+        return self.PolicySetId
+    def set_PolicySetId(self, PolicySetId):
+        self.PolicySetId = PolicySetId
+    def get_Version(self):
+        return self.Version
+    def set_Version(self, Version):
+        self.Version = Version
+    def get_PolicyCombiningAlgId(self):
+        return self.PolicyCombiningAlgId
+    def set_PolicyCombiningAlgId(self, PolicyCombiningAlgId):
+        self.PolicyCombiningAlgId = PolicyCombiningAlgId
+    def get_MaxDelegationDepth(self):
+        return self.MaxDelegationDepth
+    def set_MaxDelegationDepth(self, MaxDelegationDepth):
+        self.MaxDelegationDepth = MaxDelegationDepth
+    def validate_VersionType(self, value):
+        # Validate type xacml:VersionType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if not self.gds_validate_simple_patterns(
+                    self.validate_VersionType_patterns_, value):
+                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_VersionType_patterns_, ))
+    validate_VersionType_patterns_ = [['^((\\d+\\.)*\\d+)$']]
+    def _hasContent(self):
+        if (
+            self.Description is not None or
+            self.PolicyIssuer is not None or
+            self.PolicySetDefaults is not None or
+            self.Target is not None or
+            self.PolicySet or
+            self.Policy or
+            self.PolicySetIdReference or
+            self.PolicyIdReference or
+            self.CombinerParameters or
+            self.PolicyCombinerParameters or
+            self.PolicySetCombinerParameters or
+            self.ObligationExpressions is not None or
+            self.AdviceExpressions is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicySetType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicySetType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicySetType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicySetType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicySetType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicySetType'):
+        if self.PolicySetId is not None and 'PolicySetId' not in already_processed:
+            already_processed.add('PolicySetId')
+            outfile.write(' PolicySetId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PolicySetId), input_name='PolicySetId')), ))
+        if self.Version is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            outfile.write(' Version=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Version), input_name='Version')), ))
+        if self.PolicyCombiningAlgId is not None and 'PolicyCombiningAlgId' not in already_processed:
+            already_processed.add('PolicyCombiningAlgId')
+            outfile.write(' PolicyCombiningAlgId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PolicyCombiningAlgId), input_name='PolicyCombiningAlgId')), ))
+        if self.MaxDelegationDepth is not None and 'MaxDelegationDepth' not in already_processed:
+            already_processed.add('MaxDelegationDepth')
+            outfile.write(' MaxDelegationDepth="%s"' % self.gds_format_integer(self.MaxDelegationDepth, input_name='MaxDelegationDepth'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicySetType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        if self.PolicyIssuer is not None:
+            namespaceprefix_ = self.PolicyIssuer_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyIssuer_nsprefix_) else ''
+            self.PolicyIssuer.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyIssuer', pretty_print=pretty_print)
+        if self.PolicySetDefaults is not None:
+            namespaceprefix_ = self.PolicySetDefaults_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicySetDefaults_nsprefix_) else ''
+            self.PolicySetDefaults.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicySetDefaults', pretty_print=pretty_print)
+        if self.Target is not None:
+            namespaceprefix_ = self.Target_nsprefix_ + ':' if (UseCapturedNS_ and self.Target_nsprefix_) else ''
+            self.Target.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Target', pretty_print=pretty_print)
+        for PolicySet_ in self.PolicySet:
+            namespaceprefix_ = self.PolicySet_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicySet_nsprefix_) else ''
+            PolicySet_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicySet', pretty_print=pretty_print)
+        for Policy_ in self.Policy:
+            namespaceprefix_ = self.Policy_nsprefix_ + ':' if (UseCapturedNS_ and self.Policy_nsprefix_) else ''
+            Policy_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Policy', pretty_print=pretty_print)
+        for PolicySetIdReference_ in self.PolicySetIdReference:
+            namespaceprefix_ = self.PolicySetIdReference_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicySetIdReference_nsprefix_) else ''
+            PolicySetIdReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicySetIdReference', pretty_print=pretty_print)
+        for PolicyIdReference_ in self.PolicyIdReference:
+            namespaceprefix_ = self.PolicyIdReference_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyIdReference_nsprefix_) else ''
+            PolicyIdReference_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyIdReference', pretty_print=pretty_print)
+        for CombinerParameters_ in self.CombinerParameters:
+            namespaceprefix_ = self.CombinerParameters_nsprefix_ + ':' if (UseCapturedNS_ and self.CombinerParameters_nsprefix_) else ''
+            CombinerParameters_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='CombinerParameters', pretty_print=pretty_print)
+        for PolicyCombinerParameters_ in self.PolicyCombinerParameters:
+            namespaceprefix_ = self.PolicyCombinerParameters_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyCombinerParameters_nsprefix_) else ''
+            PolicyCombinerParameters_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyCombinerParameters', pretty_print=pretty_print)
+        for PolicySetCombinerParameters_ in self.PolicySetCombinerParameters:
+            namespaceprefix_ = self.PolicySetCombinerParameters_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicySetCombinerParameters_nsprefix_) else ''
+            PolicySetCombinerParameters_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicySetCombinerParameters', pretty_print=pretty_print)
+        if self.ObligationExpressions is not None:
+            namespaceprefix_ = self.ObligationExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.ObligationExpressions_nsprefix_) else ''
+            self.ObligationExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='ObligationExpressions', pretty_print=pretty_print)
+        if self.AdviceExpressions is not None:
+            namespaceprefix_ = self.AdviceExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.AdviceExpressions_nsprefix_) else ''
+            self.AdviceExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AdviceExpressions', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('PolicySetId', node)
+        if value is not None and 'PolicySetId' not in already_processed:
+            already_processed.add('PolicySetId')
+            self.PolicySetId = value
+        value = find_attr_value_('Version', node)
+        if value is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            self.Version = value
+            self.validate_VersionType(self.Version)    # validate type VersionType
+        value = find_attr_value_('PolicyCombiningAlgId', node)
+        if value is not None and 'PolicyCombiningAlgId' not in already_processed:
+            already_processed.add('PolicyCombiningAlgId')
+            self.PolicyCombiningAlgId = value
+        value = find_attr_value_('MaxDelegationDepth', node)
+        if value is not None and 'MaxDelegationDepth' not in already_processed:
+            already_processed.add('MaxDelegationDepth')
+            self.MaxDelegationDepth = self.gds_parse_integer(value, node, 'MaxDelegationDepth')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PolicyIssuer':
+            obj_ = PolicyIssuerType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyIssuer = obj_
+            obj_.original_tagname_ = 'PolicyIssuer'
+        elif nodeName_ == 'PolicySetDefaults':
+            obj_ = DefaultsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicySetDefaults = obj_
+            obj_.original_tagname_ = 'PolicySetDefaults'
+        elif nodeName_ == 'Target':
+            obj_ = TargetType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Target = obj_
+            obj_.original_tagname_ = 'Target'
+        elif nodeName_ == 'PolicySet':
+            obj_ = PolicySetType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicySet.append(obj_)
+            obj_.original_tagname_ = 'PolicySet'
+        elif nodeName_ == 'Policy':
+            obj_ = PolicyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Policy.append(obj_)
+            obj_.original_tagname_ = 'Policy'
+        elif nodeName_ == 'PolicySetIdReference':
+            obj_ = IdReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicySetIdReference.append(obj_)
+            obj_.original_tagname_ = 'PolicySetIdReference'
+        elif nodeName_ == 'PolicyIdReference':
+            obj_ = IdReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyIdReference.append(obj_)
+            obj_.original_tagname_ = 'PolicyIdReference'
+        elif nodeName_ == 'CombinerParameters':
+            class_obj_ = self.get_class_obj_(child_, CombinerParametersType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CombinerParameters.append(obj_)
+            obj_.original_tagname_ = 'CombinerParameters'
+        elif nodeName_ == 'PolicyCombinerParameters':
+            obj_ = PolicyCombinerParametersType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyCombinerParameters.append(obj_)
+            obj_.original_tagname_ = 'PolicyCombinerParameters'
+        elif nodeName_ == 'PolicySetCombinerParameters':
+            obj_ = PolicySetCombinerParametersType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicySetCombinerParameters.append(obj_)
+            obj_.original_tagname_ = 'PolicySetCombinerParameters'
+        elif nodeName_ == 'ObligationExpressions':
+            obj_ = ObligationExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ObligationExpressions = obj_
+            obj_.original_tagname_ = 'ObligationExpressions'
+        elif nodeName_ == 'AdviceExpressions':
+            obj_ = AdviceExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdviceExpressions = obj_
+            obj_.original_tagname_ = 'AdviceExpressions'
+# end class PolicySetType
+
+
+class PolicyIssuerType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Content=None, Attribute=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Content = Content
+        self.Content_nsprefix_ = "xacml"
+        if Attribute is None:
+            self.Attribute = []
+        else:
+            self.Attribute = Attribute
+        self.Attribute_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicyIssuerType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicyIssuerType.subclass:
+            return PolicyIssuerType.subclass(*args_, **kwargs_)
+        else:
+            return PolicyIssuerType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Content(self):
+        return self.Content
+    def set_Content(self, Content):
+        self.Content = Content
+    def get_Attribute(self):
+        return self.Attribute
+    def set_Attribute(self, Attribute):
+        self.Attribute = Attribute
+    def add_Attribute(self, value):
+        self.Attribute.append(value)
+    def insert_Attribute_at(self, index, value):
+        self.Attribute.insert(index, value)
+    def replace_Attribute_at(self, index, value):
+        self.Attribute[index] = value
+    def _hasContent(self):
+        if (
+            self.Content is not None or
+            self.Attribute
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyIssuerType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicyIssuerType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicyIssuerType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicyIssuerType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicyIssuerType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicyIssuerType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyIssuerType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Content is not None:
+            namespaceprefix_ = self.Content_nsprefix_ + ':' if (UseCapturedNS_ and self.Content_nsprefix_) else ''
+            self.Content.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Content', pretty_print=pretty_print)
+        for Attribute_ in self.Attribute:
+            namespaceprefix_ = self.Attribute_nsprefix_ + ':' if (UseCapturedNS_ and self.Attribute_nsprefix_) else ''
+            Attribute_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Attribute', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Content':
+            obj_ = ContentType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Content = obj_
+            obj_.original_tagname_ = 'Content'
+        elif nodeName_ == 'Attribute':
+            obj_ = AttributeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Attribute.append(obj_)
+            obj_.original_tagname_ = 'Attribute'
+# end class PolicyIssuerType
+
+
+class CombinerParametersType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CombinerParameter=None, extensiontype_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if CombinerParameter is None:
+            self.CombinerParameter = []
+        else:
+            self.CombinerParameter = CombinerParameter
+        self.CombinerParameter_nsprefix_ = "xacml"
+        self.extensiontype_ = extensiontype_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CombinerParametersType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CombinerParametersType.subclass:
+            return CombinerParametersType.subclass(*args_, **kwargs_)
+        else:
+            return CombinerParametersType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CombinerParameter(self):
+        return self.CombinerParameter
+    def set_CombinerParameter(self, CombinerParameter):
+        self.CombinerParameter = CombinerParameter
+    def add_CombinerParameter(self, value):
+        self.CombinerParameter.append(value)
+    def insert_CombinerParameter_at(self, index, value):
+        self.CombinerParameter.insert(index, value)
+    def replace_CombinerParameter_at(self, index, value):
+        self.CombinerParameter[index] = value
+    def get_extensiontype_(self): return self.extensiontype_
+    def set_extensiontype_(self, extensiontype_): self.extensiontype_ = extensiontype_
+    def _hasContent(self):
+        if (
+            self.CombinerParameter
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='CombinerParametersType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CombinerParametersType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CombinerParametersType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CombinerParametersType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CombinerParametersType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CombinerParametersType'):
+        if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            if ":" not in self.extensiontype_:
+                imported_ns_type_prefix_ = GenerateDSNamespaceTypePrefixes_.get(self.extensiontype_, '')
+                outfile.write(' xsi:type="%s%s"' % (imported_ns_type_prefix_, self.extensiontype_))
+            else:
+                outfile.write(' xsi:type="%s"' % self.extensiontype_)
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='CombinerParametersType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for CombinerParameter_ in self.CombinerParameter:
+            namespaceprefix_ = self.CombinerParameter_nsprefix_ + ':' if (UseCapturedNS_ and self.CombinerParameter_nsprefix_) else ''
+            CombinerParameter_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='CombinerParameter', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('xsi:type', node)
+        if value is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            self.extensiontype_ = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CombinerParameter':
+            obj_ = CombinerParameterType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CombinerParameter.append(obj_)
+            obj_.original_tagname_ = 'CombinerParameter'
+# end class CombinerParametersType
+
+
+class CombinerParameterType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ParameterName=None, AttributeValue=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.ParameterName = _cast(None, ParameterName)
+        self.ParameterName_nsprefix_ = None
+        self.AttributeValue = AttributeValue
+        self.AttributeValue_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CombinerParameterType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CombinerParameterType.subclass:
+            return CombinerParameterType.subclass(*args_, **kwargs_)
+        else:
+            return CombinerParameterType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeValue(self):
+        return self.AttributeValue
+    def set_AttributeValue(self, AttributeValue):
+        self.AttributeValue = AttributeValue
+    def get_ParameterName(self):
+        return self.ParameterName
+    def set_ParameterName(self, ParameterName):
+        self.ParameterName = ParameterName
+    def _hasContent(self):
+        if (
+            self.AttributeValue is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='CombinerParameterType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CombinerParameterType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CombinerParameterType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CombinerParameterType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CombinerParameterType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CombinerParameterType'):
+        if self.ParameterName is not None and 'ParameterName' not in already_processed:
+            already_processed.add('ParameterName')
+            outfile.write(' ParameterName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ParameterName), input_name='ParameterName')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='CombinerParameterType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AttributeValue is not None:
+            namespaceprefix_ = self.AttributeValue_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeValue_nsprefix_) else ''
+            self.AttributeValue.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeValue', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('ParameterName', node)
+        if value is not None and 'ParameterName' not in already_processed:
+            already_processed.add('ParameterName')
+            self.ParameterName = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeValue = obj_
+            obj_.original_tagname_ = 'AttributeValue'
+# end class CombinerParameterType
+
+
+class RuleCombinerParametersType(CombinerParametersType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = CombinerParametersType
+    def __init__(self, CombinerParameter=None, RuleIdRef=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("RuleCombinerParametersType"), self).__init__(CombinerParameter,  **kwargs_)
+        self.RuleIdRef = _cast(None, RuleIdRef)
+        self.RuleIdRef_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RuleCombinerParametersType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RuleCombinerParametersType.subclass:
+            return RuleCombinerParametersType.subclass(*args_, **kwargs_)
+        else:
+            return RuleCombinerParametersType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_RuleIdRef(self):
+        return self.RuleIdRef
+    def set_RuleIdRef(self, RuleIdRef):
+        self.RuleIdRef = RuleIdRef
+    def _hasContent(self):
+        if (
+            super(RuleCombinerParametersType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RuleCombinerParametersType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RuleCombinerParametersType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RuleCombinerParametersType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RuleCombinerParametersType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RuleCombinerParametersType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RuleCombinerParametersType'):
+        super(RuleCombinerParametersType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RuleCombinerParametersType')
+        if self.RuleIdRef is not None and 'RuleIdRef' not in already_processed:
+            already_processed.add('RuleIdRef')
+            outfile.write(' RuleIdRef=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.RuleIdRef), input_name='RuleIdRef')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RuleCombinerParametersType', fromsubclass_=False, pretty_print=True):
+        super(RuleCombinerParametersType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('RuleIdRef', node)
+        if value is not None and 'RuleIdRef' not in already_processed:
+            already_processed.add('RuleIdRef')
+            self.RuleIdRef = value
+        super(RuleCombinerParametersType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        super(RuleCombinerParametersType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class RuleCombinerParametersType
+
+
+class PolicyCombinerParametersType(CombinerParametersType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = CombinerParametersType
+    def __init__(self, CombinerParameter=None, PolicyIdRef=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("PolicyCombinerParametersType"), self).__init__(CombinerParameter,  **kwargs_)
+        self.PolicyIdRef = _cast(None, PolicyIdRef)
+        self.PolicyIdRef_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicyCombinerParametersType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicyCombinerParametersType.subclass:
+            return PolicyCombinerParametersType.subclass(*args_, **kwargs_)
+        else:
+            return PolicyCombinerParametersType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PolicyIdRef(self):
+        return self.PolicyIdRef
+    def set_PolicyIdRef(self, PolicyIdRef):
+        self.PolicyIdRef = PolicyIdRef
+    def _hasContent(self):
+        if (
+            super(PolicyCombinerParametersType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyCombinerParametersType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicyCombinerParametersType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicyCombinerParametersType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicyCombinerParametersType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicyCombinerParametersType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicyCombinerParametersType'):
+        super(PolicyCombinerParametersType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicyCombinerParametersType')
+        if self.PolicyIdRef is not None and 'PolicyIdRef' not in already_processed:
+            already_processed.add('PolicyIdRef')
+            outfile.write(' PolicyIdRef=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PolicyIdRef), input_name='PolicyIdRef')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyCombinerParametersType', fromsubclass_=False, pretty_print=True):
+        super(PolicyCombinerParametersType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('PolicyIdRef', node)
+        if value is not None and 'PolicyIdRef' not in already_processed:
+            already_processed.add('PolicyIdRef')
+            self.PolicyIdRef = value
+        super(PolicyCombinerParametersType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        super(PolicyCombinerParametersType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class PolicyCombinerParametersType
+
+
+class PolicySetCombinerParametersType(CombinerParametersType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = CombinerParametersType
+    def __init__(self, CombinerParameter=None, PolicySetIdRef=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("PolicySetCombinerParametersType"), self).__init__(CombinerParameter,  **kwargs_)
+        self.PolicySetIdRef = _cast(None, PolicySetIdRef)
+        self.PolicySetIdRef_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicySetCombinerParametersType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicySetCombinerParametersType.subclass:
+            return PolicySetCombinerParametersType.subclass(*args_, **kwargs_)
+        else:
+            return PolicySetCombinerParametersType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PolicySetIdRef(self):
+        return self.PolicySetIdRef
+    def set_PolicySetIdRef(self, PolicySetIdRef):
+        self.PolicySetIdRef = PolicySetIdRef
+    def _hasContent(self):
+        if (
+            super(PolicySetCombinerParametersType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicySetCombinerParametersType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicySetCombinerParametersType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicySetCombinerParametersType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicySetCombinerParametersType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicySetCombinerParametersType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicySetCombinerParametersType'):
+        super(PolicySetCombinerParametersType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicySetCombinerParametersType')
+        if self.PolicySetIdRef is not None and 'PolicySetIdRef' not in already_processed:
+            already_processed.add('PolicySetIdRef')
+            outfile.write(' PolicySetIdRef=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PolicySetIdRef), input_name='PolicySetIdRef')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicySetCombinerParametersType', fromsubclass_=False, pretty_print=True):
+        super(PolicySetCombinerParametersType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('PolicySetIdRef', node)
+        if value is not None and 'PolicySetIdRef' not in already_processed:
+            already_processed.add('PolicySetIdRef')
+            self.PolicySetIdRef = value
+        super(PolicySetCombinerParametersType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        super(PolicySetCombinerParametersType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class PolicySetCombinerParametersType
+
+
+class DefaultsType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, XPathVersion=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.XPathVersion = XPathVersion
+        self.XPathVersion_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DefaultsType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DefaultsType.subclass:
+            return DefaultsType.subclass(*args_, **kwargs_)
+        else:
+            return DefaultsType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_XPathVersion(self):
+        return self.XPathVersion
+    def set_XPathVersion(self, XPathVersion):
+        self.XPathVersion = XPathVersion
+    def _hasContent(self):
+        if (
+            self.XPathVersion is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='DefaultsType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DefaultsType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DefaultsType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DefaultsType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DefaultsType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DefaultsType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='DefaultsType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.XPathVersion is not None:
+            namespaceprefix_ = self.XPathVersion_nsprefix_ + ':' if (UseCapturedNS_ and self.XPathVersion_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sXPathVersion>%s</%sXPathVersion>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.XPathVersion), input_name='XPathVersion')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'XPathVersion':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'XPathVersion')
+            value_ = self.gds_validate_string(value_, node, 'XPathVersion')
+            self.XPathVersion = value_
+            self.XPathVersion_nsprefix_ = child_.prefix
+# end class DefaultsType
+
+
+class IdReferenceType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Version=None, EarliestVersion=None, LatestVersion=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Version = _cast(None, Version)
+        self.Version_nsprefix_ = None
+        self.EarliestVersion = _cast(None, EarliestVersion)
+        self.EarliestVersion_nsprefix_ = None
+        self.LatestVersion = _cast(None, LatestVersion)
+        self.LatestVersion_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, IdReferenceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if IdReferenceType.subclass:
+            return IdReferenceType.subclass(*args_, **kwargs_)
+        else:
+            return IdReferenceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Version(self):
+        return self.Version
+    def set_Version(self, Version):
+        self.Version = Version
+    def get_EarliestVersion(self):
+        return self.EarliestVersion
+    def set_EarliestVersion(self, EarliestVersion):
+        self.EarliestVersion = EarliestVersion
+    def get_LatestVersion(self):
+        return self.LatestVersion
+    def set_LatestVersion(self, LatestVersion):
+        self.LatestVersion = LatestVersion
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def validate_VersionMatchType(self, value):
+        # Validate type xacml:VersionMatchType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if not self.gds_validate_simple_patterns(
+                    self.validate_VersionMatchType_patterns_, value):
+                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_VersionMatchType_patterns_, ))
+    validate_VersionMatchType_patterns_ = [['^(((\\d+|\\*)\\.)*(\\d+|\\*|\\+))$']]
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='IdReferenceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('IdReferenceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'IdReferenceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='IdReferenceType')
+        if self._hasContent():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='IdReferenceType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='IdReferenceType'):
+        if self.Version is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            outfile.write(' Version=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Version), input_name='Version')), ))
+        if self.EarliestVersion is not None and 'EarliestVersion' not in already_processed:
+            already_processed.add('EarliestVersion')
+            outfile.write(' EarliestVersion=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.EarliestVersion), input_name='EarliestVersion')), ))
+        if self.LatestVersion is not None and 'LatestVersion' not in already_processed:
+            already_processed.add('LatestVersion')
+            outfile.write(' LatestVersion=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.LatestVersion), input_name='LatestVersion')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='IdReferenceType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Version', node)
+        if value is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            self.Version = value
+            self.validate_VersionMatchType(self.Version)    # validate type VersionMatchType
+        value = find_attr_value_('EarliestVersion', node)
+        if value is not None and 'EarliestVersion' not in already_processed:
+            already_processed.add('EarliestVersion')
+            self.EarliestVersion = value
+            self.validate_VersionMatchType(self.EarliestVersion)    # validate type VersionMatchType
+        value = find_attr_value_('LatestVersion', node)
+        if value is not None and 'LatestVersion' not in already_processed:
+            already_processed.add('LatestVersion')
+            self.LatestVersion = value
+            self.validate_VersionMatchType(self.LatestVersion)    # validate type VersionMatchType
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class IdReferenceType
+
+
+class PolicyType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PolicyId=None, Version=None, RuleCombiningAlgId=None, MaxDelegationDepth=None, Description=None, PolicyIssuer=None, PolicyDefaults=None, Target=None, CombinerParameters=None, RuleCombinerParameters=None, VariableDefinition=None, Rule=None, ObligationExpressions=None, AdviceExpressions=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.PolicyId = _cast(None, PolicyId)
+        self.PolicyId_nsprefix_ = None
+        self.Version = _cast(None, Version)
+        self.Version_nsprefix_ = None
+        self.RuleCombiningAlgId = _cast(None, RuleCombiningAlgId)
+        self.RuleCombiningAlgId_nsprefix_ = None
+        self.MaxDelegationDepth = _cast(int, MaxDelegationDepth)
+        self.MaxDelegationDepth_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = "xacml"
+        self.PolicyIssuer = PolicyIssuer
+        self.PolicyIssuer_nsprefix_ = "xacml"
+        self.PolicyDefaults = PolicyDefaults
+        self.PolicyDefaults_nsprefix_ = "xacml"
+        self.Target = Target
+        self.Target_nsprefix_ = "xacml"
+        if CombinerParameters is None:
+            self.CombinerParameters = []
+        else:
+            self.CombinerParameters = CombinerParameters
+        self.CombinerParameters_nsprefix_ = "xacml"
+        if RuleCombinerParameters is None:
+            self.RuleCombinerParameters = []
+        else:
+            self.RuleCombinerParameters = RuleCombinerParameters
+        self.RuleCombinerParameters_nsprefix_ = "xacml"
+        if VariableDefinition is None:
+            self.VariableDefinition = []
+        else:
+            self.VariableDefinition = VariableDefinition
+        self.VariableDefinition_nsprefix_ = "xacml"
+        if Rule is None:
+            self.Rule = []
+        else:
+            self.Rule = Rule
+        self.Rule_nsprefix_ = "xacml"
+        self.ObligationExpressions = ObligationExpressions
+        self.ObligationExpressions_nsprefix_ = "xacml"
+        self.AdviceExpressions = AdviceExpressions
+        self.AdviceExpressions_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PolicyType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PolicyType.subclass:
+            return PolicyType.subclass(*args_, **kwargs_)
+        else:
+            return PolicyType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_PolicyIssuer(self):
+        return self.PolicyIssuer
+    def set_PolicyIssuer(self, PolicyIssuer):
+        self.PolicyIssuer = PolicyIssuer
+    def get_PolicyDefaults(self):
+        return self.PolicyDefaults
+    def set_PolicyDefaults(self, PolicyDefaults):
+        self.PolicyDefaults = PolicyDefaults
+    def get_Target(self):
+        return self.Target
+    def set_Target(self, Target):
+        self.Target = Target
+    def get_CombinerParameters(self):
+        return self.CombinerParameters
+    def set_CombinerParameters(self, CombinerParameters):
+        self.CombinerParameters = CombinerParameters
+    def add_CombinerParameters(self, value):
+        self.CombinerParameters.append(value)
+    def insert_CombinerParameters_at(self, index, value):
+        self.CombinerParameters.insert(index, value)
+    def replace_CombinerParameters_at(self, index, value):
+        self.CombinerParameters[index] = value
+    def get_RuleCombinerParameters(self):
+        return self.RuleCombinerParameters
+    def set_RuleCombinerParameters(self, RuleCombinerParameters):
+        self.RuleCombinerParameters = RuleCombinerParameters
+    def add_RuleCombinerParameters(self, value):
+        self.RuleCombinerParameters.append(value)
+    def insert_RuleCombinerParameters_at(self, index, value):
+        self.RuleCombinerParameters.insert(index, value)
+    def replace_RuleCombinerParameters_at(self, index, value):
+        self.RuleCombinerParameters[index] = value
+    def get_VariableDefinition(self):
+        return self.VariableDefinition
+    def set_VariableDefinition(self, VariableDefinition):
+        self.VariableDefinition = VariableDefinition
+    def add_VariableDefinition(self, value):
+        self.VariableDefinition.append(value)
+    def insert_VariableDefinition_at(self, index, value):
+        self.VariableDefinition.insert(index, value)
+    def replace_VariableDefinition_at(self, index, value):
+        self.VariableDefinition[index] = value
+    def get_Rule(self):
+        return self.Rule
+    def set_Rule(self, Rule):
+        self.Rule = Rule
+    def add_Rule(self, value):
+        self.Rule.append(value)
+    def insert_Rule_at(self, index, value):
+        self.Rule.insert(index, value)
+    def replace_Rule_at(self, index, value):
+        self.Rule[index] = value
+    def get_ObligationExpressions(self):
+        return self.ObligationExpressions
+    def set_ObligationExpressions(self, ObligationExpressions):
+        self.ObligationExpressions = ObligationExpressions
+    def get_AdviceExpressions(self):
+        return self.AdviceExpressions
+    def set_AdviceExpressions(self, AdviceExpressions):
+        self.AdviceExpressions = AdviceExpressions
+    def get_PolicyId(self):
+        return self.PolicyId
+    def set_PolicyId(self, PolicyId):
+        self.PolicyId = PolicyId
+    def get_Version(self):
+        return self.Version
+    def set_Version(self, Version):
+        self.Version = Version
+    def get_RuleCombiningAlgId(self):
+        return self.RuleCombiningAlgId
+    def set_RuleCombiningAlgId(self, RuleCombiningAlgId):
+        self.RuleCombiningAlgId = RuleCombiningAlgId
+    def get_MaxDelegationDepth(self):
+        return self.MaxDelegationDepth
+    def set_MaxDelegationDepth(self, MaxDelegationDepth):
+        self.MaxDelegationDepth = MaxDelegationDepth
+    def validate_VersionType(self, value):
+        # Validate type xacml:VersionType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if not self.gds_validate_simple_patterns(
+                    self.validate_VersionType_patterns_, value):
+                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_VersionType_patterns_, ))
+    validate_VersionType_patterns_ = [['^((\\d+\\.)*\\d+)$']]
+    def _hasContent(self):
+        if (
+            self.Description is not None or
+            self.PolicyIssuer is not None or
+            self.PolicyDefaults is not None or
+            self.Target is not None or
+            self.CombinerParameters or
+            self.RuleCombinerParameters or
+            self.VariableDefinition or
+            self.Rule or
+            self.ObligationExpressions is not None or
+            self.AdviceExpressions is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PolicyType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PolicyType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PolicyType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PolicyType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PolicyType'):
+        if self.PolicyId is not None and 'PolicyId' not in already_processed:
+            already_processed.add('PolicyId')
+            outfile.write(' PolicyId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PolicyId), input_name='PolicyId')), ))
+        if self.Version is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            outfile.write(' Version=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Version), input_name='Version')), ))
+        if self.RuleCombiningAlgId is not None and 'RuleCombiningAlgId' not in already_processed:
+            already_processed.add('RuleCombiningAlgId')
+            outfile.write(' RuleCombiningAlgId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.RuleCombiningAlgId), input_name='RuleCombiningAlgId')), ))
+        if self.MaxDelegationDepth is not None and 'MaxDelegationDepth' not in already_processed:
+            already_processed.add('MaxDelegationDepth')
+            outfile.write(' MaxDelegationDepth="%s"' % self.gds_format_integer(self.MaxDelegationDepth, input_name='MaxDelegationDepth'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='PolicyType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        if self.PolicyIssuer is not None:
+            namespaceprefix_ = self.PolicyIssuer_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyIssuer_nsprefix_) else ''
+            self.PolicyIssuer.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyIssuer', pretty_print=pretty_print)
+        if self.PolicyDefaults is not None:
+            namespaceprefix_ = self.PolicyDefaults_nsprefix_ + ':' if (UseCapturedNS_ and self.PolicyDefaults_nsprefix_) else ''
+            self.PolicyDefaults.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='PolicyDefaults', pretty_print=pretty_print)
+        if self.Target is not None:
+            namespaceprefix_ = self.Target_nsprefix_ + ':' if (UseCapturedNS_ and self.Target_nsprefix_) else ''
+            self.Target.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Target', pretty_print=pretty_print)
+        for CombinerParameters_ in self.CombinerParameters:
+            namespaceprefix_ = self.CombinerParameters_nsprefix_ + ':' if (UseCapturedNS_ and self.CombinerParameters_nsprefix_) else ''
+            CombinerParameters_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='CombinerParameters', pretty_print=pretty_print)
+        for RuleCombinerParameters_ in self.RuleCombinerParameters:
+            namespaceprefix_ = self.RuleCombinerParameters_nsprefix_ + ':' if (UseCapturedNS_ and self.RuleCombinerParameters_nsprefix_) else ''
+            RuleCombinerParameters_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='RuleCombinerParameters', pretty_print=pretty_print)
+        for VariableDefinition_ in self.VariableDefinition:
+            namespaceprefix_ = self.VariableDefinition_nsprefix_ + ':' if (UseCapturedNS_ and self.VariableDefinition_nsprefix_) else ''
+            VariableDefinition_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='VariableDefinition', pretty_print=pretty_print)
+        for Rule_ in self.Rule:
+            namespaceprefix_ = self.Rule_nsprefix_ + ':' if (UseCapturedNS_ and self.Rule_nsprefix_) else ''
+            Rule_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Rule', pretty_print=pretty_print)
+        if self.ObligationExpressions is not None:
+            namespaceprefix_ = self.ObligationExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.ObligationExpressions_nsprefix_) else ''
+            self.ObligationExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='ObligationExpressions', pretty_print=pretty_print)
+        if self.AdviceExpressions is not None:
+            namespaceprefix_ = self.AdviceExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.AdviceExpressions_nsprefix_) else ''
+            self.AdviceExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AdviceExpressions', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('PolicyId', node)
+        if value is not None and 'PolicyId' not in already_processed:
+            already_processed.add('PolicyId')
+            self.PolicyId = value
+        value = find_attr_value_('Version', node)
+        if value is not None and 'Version' not in already_processed:
+            already_processed.add('Version')
+            self.Version = value
+            self.validate_VersionType(self.Version)    # validate type VersionType
+        value = find_attr_value_('RuleCombiningAlgId', node)
+        if value is not None and 'RuleCombiningAlgId' not in already_processed:
+            already_processed.add('RuleCombiningAlgId')
+            self.RuleCombiningAlgId = value
+        value = find_attr_value_('MaxDelegationDepth', node)
+        if value is not None and 'MaxDelegationDepth' not in already_processed:
+            already_processed.add('MaxDelegationDepth')
+            self.MaxDelegationDepth = self.gds_parse_integer(value, node, 'MaxDelegationDepth')
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'PolicyIssuer':
+            obj_ = PolicyIssuerType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyIssuer = obj_
+            obj_.original_tagname_ = 'PolicyIssuer'
+        elif nodeName_ == 'PolicyDefaults':
+            obj_ = DefaultsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PolicyDefaults = obj_
+            obj_.original_tagname_ = 'PolicyDefaults'
+        elif nodeName_ == 'Target':
+            obj_ = TargetType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Target = obj_
+            obj_.original_tagname_ = 'Target'
+        elif nodeName_ == 'CombinerParameters':
+            class_obj_ = self.get_class_obj_(child_, CombinerParametersType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CombinerParameters.append(obj_)
+            obj_.original_tagname_ = 'CombinerParameters'
+        elif nodeName_ == 'RuleCombinerParameters':
+            obj_ = RuleCombinerParametersType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.RuleCombinerParameters.append(obj_)
+            obj_.original_tagname_ = 'RuleCombinerParameters'
+        elif nodeName_ == 'VariableDefinition':
+            obj_ = VariableDefinitionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.VariableDefinition.append(obj_)
+            obj_.original_tagname_ = 'VariableDefinition'
+        elif nodeName_ == 'Rule':
+            obj_ = RuleType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Rule.append(obj_)
+            obj_.original_tagname_ = 'Rule'
+        elif nodeName_ == 'ObligationExpressions':
+            obj_ = ObligationExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ObligationExpressions = obj_
+            obj_.original_tagname_ = 'ObligationExpressions'
+        elif nodeName_ == 'AdviceExpressions':
+            obj_ = AdviceExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdviceExpressions = obj_
+            obj_.original_tagname_ = 'AdviceExpressions'
+# end class PolicyType
+
+
+class RuleType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, RuleId=None, Effect=None, Description=None, Target=None, Condition=None, ObligationExpressions=None, AdviceExpressions=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.RuleId = _cast(None, RuleId)
+        self.RuleId_nsprefix_ = None
+        self.Effect = _cast(None, Effect)
+        self.Effect_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = "xacml"
+        self.Target = Target
+        self.Target_nsprefix_ = "xacml"
+        self.Condition = Condition
+        self.Condition_nsprefix_ = "xacml"
+        self.ObligationExpressions = ObligationExpressions
+        self.ObligationExpressions_nsprefix_ = "xacml"
+        self.AdviceExpressions = AdviceExpressions
+        self.AdviceExpressions_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, RuleType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if RuleType.subclass:
+            return RuleType.subclass(*args_, **kwargs_)
+        else:
+            return RuleType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_Target(self):
+        return self.Target
+    def set_Target(self, Target):
+        self.Target = Target
+    def get_Condition(self):
+        return self.Condition
+    def set_Condition(self, Condition):
+        self.Condition = Condition
+    def get_ObligationExpressions(self):
+        return self.ObligationExpressions
+    def set_ObligationExpressions(self, ObligationExpressions):
+        self.ObligationExpressions = ObligationExpressions
+    def get_AdviceExpressions(self):
+        return self.AdviceExpressions
+    def set_AdviceExpressions(self, AdviceExpressions):
+        self.AdviceExpressions = AdviceExpressions
+    def get_RuleId(self):
+        return self.RuleId
+    def set_RuleId(self, RuleId):
+        self.RuleId = RuleId
+    def get_Effect(self):
+        return self.Effect
+    def set_Effect(self, Effect):
+        self.Effect = Effect
+    def validate_EffectType(self, value):
+        # Validate type xacml:EffectType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Permit', 'Deny']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on EffectType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+    def _hasContent(self):
+        if (
+            self.Description is not None or
+            self.Target is not None or
+            self.Condition is not None or
+            self.ObligationExpressions is not None or
+            self.AdviceExpressions is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RuleType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RuleType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'RuleType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RuleType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RuleType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RuleType'):
+        if self.RuleId is not None and 'RuleId' not in already_processed:
+            already_processed.add('RuleId')
+            outfile.write(' RuleId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.RuleId), input_name='RuleId')), ))
+        if self.Effect is not None and 'Effect' not in already_processed:
+            already_processed.add('Effect')
+            outfile.write(' Effect=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Effect), input_name='Effect')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='RuleType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        if self.Target is not None:
+            namespaceprefix_ = self.Target_nsprefix_ + ':' if (UseCapturedNS_ and self.Target_nsprefix_) else ''
+            self.Target.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Target', pretty_print=pretty_print)
+        if self.Condition is not None:
+            namespaceprefix_ = self.Condition_nsprefix_ + ':' if (UseCapturedNS_ and self.Condition_nsprefix_) else ''
+            self.Condition.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Condition', pretty_print=pretty_print)
+        if self.ObligationExpressions is not None:
+            namespaceprefix_ = self.ObligationExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.ObligationExpressions_nsprefix_) else ''
+            self.ObligationExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='ObligationExpressions', pretty_print=pretty_print)
+        if self.AdviceExpressions is not None:
+            namespaceprefix_ = self.AdviceExpressions_nsprefix_ + ':' if (UseCapturedNS_ and self.AdviceExpressions_nsprefix_) else ''
+            self.AdviceExpressions.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AdviceExpressions', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('RuleId', node)
+        if value is not None and 'RuleId' not in already_processed:
+            already_processed.add('RuleId')
+            self.RuleId = value
+        value = find_attr_value_('Effect', node)
+        if value is not None and 'Effect' not in already_processed:
+            already_processed.add('Effect')
+            self.Effect = value
+            self.validate_EffectType(self.Effect)    # validate type EffectType
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Description':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Description')
+            value_ = self.gds_validate_string(value_, node, 'Description')
+            self.Description = value_
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Target':
+            obj_ = TargetType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Target = obj_
+            obj_.original_tagname_ = 'Target'
+        elif nodeName_ == 'Condition':
+            obj_ = ConditionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Condition = obj_
+            obj_.original_tagname_ = 'Condition'
+        elif nodeName_ == 'ObligationExpressions':
+            obj_ = ObligationExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ObligationExpressions = obj_
+            obj_.original_tagname_ = 'ObligationExpressions'
+        elif nodeName_ == 'AdviceExpressions':
+            obj_ = AdviceExpressionsType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdviceExpressions = obj_
+            obj_.original_tagname_ = 'AdviceExpressions'
+# end class RuleType
+
+
+class TargetType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AnyOf=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if AnyOf is None:
+            self.AnyOf = []
+        else:
+            self.AnyOf = AnyOf
+        self.AnyOf_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, TargetType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if TargetType.subclass:
+            return TargetType.subclass(*args_, **kwargs_)
+        else:
+            return TargetType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AnyOf(self):
+        return self.AnyOf
+    def set_AnyOf(self, AnyOf):
+        self.AnyOf = AnyOf
+    def add_AnyOf(self, value):
+        self.AnyOf.append(value)
+    def insert_AnyOf_at(self, index, value):
+        self.AnyOf.insert(index, value)
+    def replace_AnyOf_at(self, index, value):
+        self.AnyOf[index] = value
+    def _hasContent(self):
+        if (
+            self.AnyOf
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='TargetType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TargetType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'TargetType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TargetType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TargetType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TargetType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='TargetType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AnyOf_ in self.AnyOf:
+            namespaceprefix_ = self.AnyOf_nsprefix_ + ':' if (UseCapturedNS_ and self.AnyOf_nsprefix_) else ''
+            AnyOf_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AnyOf', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AnyOf':
+            obj_ = AnyOfType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AnyOf.append(obj_)
+            obj_.original_tagname_ = 'AnyOf'
+# end class TargetType
+
+
+class AnyOfType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AllOf=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if AllOf is None:
+            self.AllOf = []
+        else:
+            self.AllOf = AllOf
+        self.AllOf_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AnyOfType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AnyOfType.subclass:
+            return AnyOfType.subclass(*args_, **kwargs_)
+        else:
+            return AnyOfType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AllOf(self):
+        return self.AllOf
+    def set_AllOf(self, AllOf):
+        self.AllOf = AllOf
+    def add_AllOf(self, value):
+        self.AllOf.append(value)
+    def insert_AllOf_at(self, index, value):
+        self.AllOf.insert(index, value)
+    def replace_AllOf_at(self, index, value):
+        self.AllOf[index] = value
+    def _hasContent(self):
+        if (
+            self.AllOf
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AnyOfType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AnyOfType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AnyOfType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AnyOfType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AnyOfType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AnyOfType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AnyOfType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AllOf_ in self.AllOf:
+            namespaceprefix_ = self.AllOf_nsprefix_ + ':' if (UseCapturedNS_ and self.AllOf_nsprefix_) else ''
+            AllOf_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AllOf', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AllOf':
+            obj_ = AllOfType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AllOf.append(obj_)
+            obj_.original_tagname_ = 'AllOf'
+# end class AnyOfType
+
+
+class AllOfType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Match=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        if Match is None:
+            self.Match = []
+        else:
+            self.Match = Match
+        self.Match_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AllOfType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AllOfType.subclass:
+            return AllOfType.subclass(*args_, **kwargs_)
+        else:
+            return AllOfType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Match(self):
+        return self.Match
+    def set_Match(self, Match):
+        self.Match = Match
+    def add_Match(self, value):
+        self.Match.append(value)
+    def insert_Match_at(self, index, value):
+        self.Match.insert(index, value)
+    def replace_Match_at(self, index, value):
+        self.Match[index] = value
+    def _hasContent(self):
+        if (
+            self.Match
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AllOfType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AllOfType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AllOfType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AllOfType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AllOfType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AllOfType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AllOfType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Match_ in self.Match:
+            namespaceprefix_ = self.Match_nsprefix_ + ':' if (UseCapturedNS_ and self.Match_nsprefix_) else ''
+            Match_.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='Match', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Match':
+            obj_ = MatchType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Match.append(obj_)
+            obj_.original_tagname_ = 'Match'
+# end class AllOfType
+
+
+class MatchType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, MatchId=None, AttributeValue=None, AttributeDesignator=None, AttributeSelector=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.MatchId = _cast(None, MatchId)
+        self.MatchId_nsprefix_ = None
+        self.AttributeValue = AttributeValue
+        self.AttributeValue_nsprefix_ = "xacml"
+        self.AttributeDesignator = AttributeDesignator
+        self.AttributeDesignator_nsprefix_ = "xacml"
+        self.AttributeSelector = AttributeSelector
+        self.AttributeSelector_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, MatchType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if MatchType.subclass:
+            return MatchType.subclass(*args_, **kwargs_)
+        else:
+            return MatchType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeValue(self):
+        return self.AttributeValue
+    def set_AttributeValue(self, AttributeValue):
+        self.AttributeValue = AttributeValue
+    def get_AttributeDesignator(self):
+        return self.AttributeDesignator
+    def set_AttributeDesignator(self, AttributeDesignator):
+        self.AttributeDesignator = AttributeDesignator
+    def get_AttributeSelector(self):
+        return self.AttributeSelector
+    def set_AttributeSelector(self, AttributeSelector):
+        self.AttributeSelector = AttributeSelector
+    def get_MatchId(self):
+        return self.MatchId
+    def set_MatchId(self, MatchId):
+        self.MatchId = MatchId
+    def _hasContent(self):
+        if (
+            self.AttributeValue is not None or
+            self.AttributeDesignator is not None or
+            self.AttributeSelector is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MatchType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('MatchType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'MatchType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='MatchType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='MatchType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='MatchType'):
+        if self.MatchId is not None and 'MatchId' not in already_processed:
+            already_processed.add('MatchId')
+            outfile.write(' MatchId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.MatchId), input_name='MatchId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='MatchType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.AttributeValue is not None:
+            namespaceprefix_ = self.AttributeValue_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeValue_nsprefix_) else ''
+            self.AttributeValue.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeValue', pretty_print=pretty_print)
+        if self.AttributeDesignator is not None:
+            namespaceprefix_ = self.AttributeDesignator_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeDesignator_nsprefix_) else ''
+            self.AttributeDesignator.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeDesignator', pretty_print=pretty_print)
+        if self.AttributeSelector is not None:
+            namespaceprefix_ = self.AttributeSelector_nsprefix_ + ':' if (UseCapturedNS_ and self.AttributeSelector_nsprefix_) else ''
+            self.AttributeSelector.export(outfile, level, namespaceprefix_='xacml:', namespacedef_='', name_='AttributeSelector', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('MatchId', node)
+        if value is not None and 'MatchId' not in already_processed:
+            already_processed.add('MatchId')
+            self.MatchId = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeValue = obj_
+            obj_.original_tagname_ = 'AttributeValue'
+        elif nodeName_ == 'AttributeDesignator':
+            obj_ = AttributeDesignatorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeDesignator = obj_
+            obj_.original_tagname_ = 'AttributeDesignator'
+        elif nodeName_ == 'AttributeSelector':
+            obj_ = AttributeSelectorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AttributeSelector = obj_
+            obj_.original_tagname_ = 'AttributeSelector'
+# end class MatchType
+
+
+class VariableDefinitionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, VariableId=None, Expression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.VariableId = _cast(None, VariableId)
+        self.VariableId_nsprefix_ = None
+        self.Expression = Expression
+        self.Expression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, VariableDefinitionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if VariableDefinitionType.subclass:
+            return VariableDefinitionType.subclass(*args_, **kwargs_)
+        else:
+            return VariableDefinitionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Expression(self):
+        return self.Expression
+    def set_Expression(self, Expression):
+        self.Expression = Expression
+    def get_VariableId(self):
+        return self.VariableId
+    def set_VariableId(self, VariableId):
+        self.VariableId = VariableId
+    def _hasContent(self):
+        if (
+            self.Expression is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='VariableDefinitionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VariableDefinitionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'VariableDefinitionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VariableDefinitionType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='VariableDefinitionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VariableDefinitionType'):
+        if self.VariableId is not None and 'VariableId' not in already_processed:
+            already_processed.add('VariableId')
+            outfile.write(' VariableId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.VariableId), input_name='VariableId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='VariableDefinitionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Expression is not None:
+            self.Expression.export(outfile, level, namespaceprefix_, namespacedef_='', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('VariableId', node)
+        if value is not None and 'VariableId' not in already_processed:
+            already_processed.add('VariableId')
+            self.VariableId = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Expression':
+            type_name_ = child_.attrib.get(
+                '{http://www.w3.org/2001/XMLSchema-instance}type')
+            if type_name_ is None:
+                type_name_ = child_.attrib.get('type')
+            if type_name_ is not None:
+                type_names_ = type_name_.split(':')
+                if len(type_names_) == 1:
+                    type_name_ = type_names_[0]
+                else:
+                    type_name_ = type_names_[1]
+                class_ = globals()["" + type_name_]
+                obj_ = class_.factory()
+                obj_.build(child_, gds_collector_=gds_collector_)
+            else:
+                raise NotImplementedError(
+                    'Class not implemented for <Expression> element')
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Expression'
+        elif nodeName_ == 'VariableReference':
+            obj_ = VariableReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'VariableReference'
+        elif nodeName_ == 'AttributeSelector':
+            obj_ = AttributeSelectorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeSelector'
+        elif nodeName_ == 'AttributeDesignator':
+            obj_ = AttributeDesignatorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeDesignator'
+        elif nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeValue'
+        elif nodeName_ == 'Function':
+            obj_ = FunctionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Function'
+        elif nodeName_ == 'Apply':
+            obj_ = ApplyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Apply'
+# end class VariableDefinitionType
+
+
+class ExpressionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, valueOf_=None, mixedclass_=None, content_=None, extensiontype_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.valueOf_ = valueOf_
+        self.extensiontype_ = extensiontype_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ExpressionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ExpressionType.subclass:
+            return ExpressionType.subclass(*args_, **kwargs_)
+        else:
+            return ExpressionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def get_extensiontype_(self): return self.extensiontype_
+    def set_extensiontype_(self, extensiontype_): self.extensiontype_ = extensiontype_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ExpressionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ExpressionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ExpressionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ExpressionType')
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ExpressionType'):
+        if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            if ":" not in self.extensiontype_:
+                imported_ns_type_prefix_ = GenerateDSNamespaceTypePrefixes_.get(self.extensiontype_, '')
+                outfile.write(' xsi:type="%s%s"' % (imported_ns_type_prefix_, self.extensiontype_))
+            else:
+                outfile.write(' xsi:type="%s"' % self.extensiontype_)
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ExpressionType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('xsi:type', node)
+        if value is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            self.extensiontype_ = value
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        pass
+# end class ExpressionType
+
+
+class VariableReferenceType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, VariableId=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("VariableReferenceType"), self).__init__(valueOf_, mixedclass_, content_,  **kwargs_)
+        self.VariableId = _cast(None, VariableId)
+        self.VariableId_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, VariableReferenceType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if VariableReferenceType.subclass:
+            return VariableReferenceType.subclass(*args_, **kwargs_)
+        else:
+            return VariableReferenceType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_VariableId(self):
+        return self.VariableId
+    def set_VariableId(self, VariableId):
+        self.VariableId = VariableId
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(VariableReferenceType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='VariableReferenceType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VariableReferenceType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'VariableReferenceType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VariableReferenceType')
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VariableReferenceType'):
+        super(VariableReferenceType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VariableReferenceType')
+        if self.VariableId is not None and 'VariableId' not in already_processed:
+            already_processed.add('VariableId')
+            outfile.write(' VariableId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.VariableId), input_name='VariableId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='VariableReferenceType', fromsubclass_=False, pretty_print=True):
+        super(VariableReferenceType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('VariableId', node)
+        if value is not None and 'VariableId' not in already_processed:
+            already_processed.add('VariableId')
+            self.VariableId = value
+        super(VariableReferenceType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(VariableReferenceType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class VariableReferenceType
+
+
+class AttributeSelectorType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, Category=None, ContextSelectorId=None, Path=None, DataType=None, MustBePresent=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("AttributeSelectorType"), self).__init__(valueOf_, mixedclass_, content_,  **kwargs_)
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.ContextSelectorId = _cast(None, ContextSelectorId)
+        self.ContextSelectorId_nsprefix_ = None
+        self.Path = _cast(None, Path)
+        self.Path_nsprefix_ = None
+        self.DataType = _cast(None, DataType)
+        self.DataType_nsprefix_ = None
+        self.MustBePresent = _cast(bool, MustBePresent)
+        self.MustBePresent_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeSelectorType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeSelectorType.subclass:
+            return AttributeSelectorType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeSelectorType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_ContextSelectorId(self):
+        return self.ContextSelectorId
+    def set_ContextSelectorId(self, ContextSelectorId):
+        self.ContextSelectorId = ContextSelectorId
+    def get_Path(self):
+        return self.Path
+    def set_Path(self, Path):
+        self.Path = Path
+    def get_DataType(self):
+        return self.DataType
+    def set_DataType(self, DataType):
+        self.DataType = DataType
+    def get_MustBePresent(self):
+        return self.MustBePresent
+    def set_MustBePresent(self, MustBePresent):
+        self.MustBePresent = MustBePresent
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(AttributeSelectorType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeSelectorType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeSelectorType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeSelectorType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeSelectorType')
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeSelectorType'):
+        super(AttributeSelectorType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeSelectorType')
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.ContextSelectorId is not None and 'ContextSelectorId' not in already_processed:
+            already_processed.add('ContextSelectorId')
+            outfile.write(' ContextSelectorId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ContextSelectorId), input_name='ContextSelectorId')), ))
+        if self.Path is not None and 'Path' not in already_processed:
+            already_processed.add('Path')
+            outfile.write(' Path=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Path), input_name='Path')), ))
+        if self.DataType is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            outfile.write(' DataType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.DataType), input_name='DataType')), ))
+        if self.MustBePresent is not None and 'MustBePresent' not in already_processed:
+            already_processed.add('MustBePresent')
+            outfile.write(' MustBePresent="%s"' % self.gds_format_boolean(self.MustBePresent, input_name='MustBePresent'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeSelectorType', fromsubclass_=False, pretty_print=True):
+        super(AttributeSelectorType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('ContextSelectorId', node)
+        if value is not None and 'ContextSelectorId' not in already_processed:
+            already_processed.add('ContextSelectorId')
+            self.ContextSelectorId = value
+        value = find_attr_value_('Path', node)
+        if value is not None and 'Path' not in already_processed:
+            already_processed.add('Path')
+            self.Path = value
+        value = find_attr_value_('DataType', node)
+        if value is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            self.DataType = value
+        value = find_attr_value_('MustBePresent', node)
+        if value is not None and 'MustBePresent' not in already_processed:
+            already_processed.add('MustBePresent')
+            if value in ('true', '1'):
+                self.MustBePresent = True
+            elif value in ('false', '0'):
+                self.MustBePresent = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+        super(AttributeSelectorType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(AttributeSelectorType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class AttributeSelectorType
+
+
+class AttributeDesignatorType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, Category=None, AttributeId=None, DataType=None, Issuer=None, MustBePresent=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("AttributeDesignatorType"), self).__init__(valueOf_, mixedclass_, content_,  **kwargs_)
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.AttributeId = _cast(None, AttributeId)
+        self.AttributeId_nsprefix_ = None
+        self.DataType = _cast(None, DataType)
+        self.DataType_nsprefix_ = None
+        self.Issuer = _cast(None, Issuer)
+        self.Issuer_nsprefix_ = None
+        self.MustBePresent = _cast(bool, MustBePresent)
+        self.MustBePresent_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeDesignatorType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeDesignatorType.subclass:
+            return AttributeDesignatorType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeDesignatorType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_AttributeId(self):
+        return self.AttributeId
+    def set_AttributeId(self, AttributeId):
+        self.AttributeId = AttributeId
+    def get_DataType(self):
+        return self.DataType
+    def set_DataType(self, DataType):
+        self.DataType = DataType
+    def get_Issuer(self):
+        return self.Issuer
+    def set_Issuer(self, Issuer):
+        self.Issuer = Issuer
+    def get_MustBePresent(self):
+        return self.MustBePresent
+    def set_MustBePresent(self, MustBePresent):
+        self.MustBePresent = MustBePresent
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(AttributeDesignatorType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeDesignatorType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeDesignatorType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeDesignatorType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeDesignatorType')
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeDesignatorType'):
+        super(AttributeDesignatorType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeDesignatorType')
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.AttributeId is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            outfile.write(' AttributeId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AttributeId), input_name='AttributeId')), ))
+        if self.DataType is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            outfile.write(' DataType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.DataType), input_name='DataType')), ))
+        if self.Issuer is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            outfile.write(' Issuer=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Issuer), input_name='Issuer')), ))
+        if self.MustBePresent is not None and 'MustBePresent' not in already_processed:
+            already_processed.add('MustBePresent')
+            outfile.write(' MustBePresent="%s"' % self.gds_format_boolean(self.MustBePresent, input_name='MustBePresent'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeDesignatorType', fromsubclass_=False, pretty_print=True):
+        super(AttributeDesignatorType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('AttributeId', node)
+        if value is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            self.AttributeId = value
+        value = find_attr_value_('DataType', node)
+        if value is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            self.DataType = value
+        value = find_attr_value_('Issuer', node)
+        if value is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            self.Issuer = value
+        value = find_attr_value_('MustBePresent', node)
+        if value is not None and 'MustBePresent' not in already_processed:
+            already_processed.add('MustBePresent')
+            if value in ('true', '1'):
+                self.MustBePresent = True
+            elif value in ('false', '0'):
+                self.MustBePresent = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
+        super(AttributeDesignatorType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(AttributeDesignatorType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class AttributeDesignatorType
+
+
+class AttributeValueType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, DataType=None, anytypeobjs_=None, valueOf_=None, mixedclass_=None, content_=None, extensiontype_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        super(globals().get("AttributeValueType"), self).__init__(valueOf_, mixedclass_, content_, extensiontype_,  **kwargs_)
+        self.DataType = _cast(None, DataType)
+        self.DataType_nsprefix_ = None
+        if anytypeobjs_ is None:
+            self.anytypeobjs_ = []
+        else:
+            self.anytypeobjs_ = anytypeobjs_
+        self.valueOf_ = valueOf_
+        self.anyAttributes_ = {}
+        self.extensiontype_ = extensiontype_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeValueType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeValueType.subclass:
+            return AttributeValueType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeValueType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_anytypeobjs_(self): return self.anytypeobjs_
+    def set_anytypeobjs_(self, anytypeobjs_): self.anytypeobjs_ = anytypeobjs_
+    def add_anytypeobjs_(self, value): self.anytypeobjs_.append(value)
+    def insert_anytypeobjs_(self, index, value): self._anytypeobjs_[index] = value
+    def get_DataType(self):
+        return self.DataType
+    def set_DataType(self, DataType):
+        self.DataType = DataType
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def get_anyAttributes_(self): return self.anyAttributes_
+    def set_anyAttributes_(self, anyAttributes_): self.anyAttributes_ = anyAttributes_
+    def get_extensiontype_(self): return self.extensiontype_
+    def set_extensiontype_(self, extensiontype_): self.extensiontype_ = extensiontype_
+    def _hasContent(self):
+        if (
+            self.anytypeobjs_ or
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(AttributeValueType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='AttributeValueType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeValueType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeValueType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeValueType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributeValueType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeValueType'):
+        unique_counter = 0
+        for name, value in self.anyAttributes_.items():
+            xsinamespaceprefix = 'xsi'
+            xsinamespace1 = 'http://www.w3.org/2001/XMLSchema-instance'
+            xsinamespace2 = '{%s}' % (xsinamespace1, )
+            if name.startswith(xsinamespace2):
+                name1 = name[len(xsinamespace2):]
+                name2 = '%s:%s' % (xsinamespaceprefix, name1, )
+                if name2 not in already_processed:
+                    already_processed.add(name2)
+                    outfile.write(' %s=%s' % (name2, quote_attrib(value), ))
+            else:
+                mo = re_.match(Namespace_extract_pat_, name)
+                if mo is not None:
+                    namespace, name = mo.group(1, 2)
+                    if name not in already_processed:
+                        already_processed.add(name)
+                        if namespace == 'http://www.w3.org/XML/1998/namespace':
+                            outfile.write(' %s=%s' % (
+                                name, quote_attrib(value), ))
+                        else:
+                            unique_counter += 1
+                            outfile.write(' xmlns:%d="%s"' % (
+                                unique_counter, namespace, ))
+                            outfile.write(' %d:%s=%s' % (
+                                unique_counter, name, quote_attrib(value), ))
+                else:
+                    if name not in already_processed:
+                        already_processed.add(name)
+                        outfile.write(' %s=%s' % (
+                            name, quote_attrib(value), ))
+        super(AttributeValueType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeValueType')
+        if self.DataType is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            outfile.write(' DataType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.DataType), input_name='DataType')), ))
+        if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            if ":" not in self.extensiontype_:
+                imported_ns_type_prefix_ = GenerateDSNamespaceTypePrefixes_.get(self.extensiontype_, '')
+                outfile.write(' xsi:type="%s%s"' % (imported_ns_type_prefix_, self.extensiontype_))
+            else:
+                outfile.write(' xsi:type="%s"' % self.extensiontype_)
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:None="http://www.w3.org/1999/xhtml" ', name_='AttributeValueType', fromsubclass_=False, pretty_print=True):
+        super(AttributeValueType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        if not fromsubclass_:
+            for item_ in self.content_:
+                item_.export(outfile, level, item_.name, namespaceprefix_, pretty_print=pretty_print)
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if not fromsubclass_:
+            for obj_ in self.anytypeobjs_:
+                showIndent(outfile, level, pretty_print)
+                outfile.write(str(obj_))
+                outfile.write('\n')
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('DataType', node)
+        if value is not None and 'DataType' not in already_processed:
+            already_processed.add('DataType')
+            self.DataType = value
+        self.anyAttributes_ = {}
+        for name, value in attrs.items():
+            if name not in already_processed:
+                self.anyAttributes_[name] = value
+        value = find_attr_value_('xsi:type', node)
+        if value is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            self.extensiontype_ = value
+        super(AttributeValueType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == '':
+            obj_ = __ANY__.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, '', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_'):
+              self.add_(obj_.value)
+            elif hasattr(self, 'set_'):
+              self.set_(obj_.value)
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(AttributeValueType, self)._buildChildren(child_, node, nodeName_, True)
+# end class AttributeValueType
+
+
+class FunctionType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, FunctionId=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("FunctionType"), self).__init__(valueOf_, mixedclass_, content_,  **kwargs_)
+        self.FunctionId = _cast(None, FunctionId)
+        self.FunctionId_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, FunctionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if FunctionType.subclass:
+            return FunctionType.subclass(*args_, **kwargs_)
+        else:
+            return FunctionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_FunctionId(self):
+        return self.FunctionId
+    def set_FunctionId(self, FunctionId):
+        self.FunctionId = FunctionId
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(FunctionType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='FunctionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('FunctionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'FunctionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FunctionType')
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='FunctionType'):
+        super(FunctionType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='FunctionType')
+        if self.FunctionId is not None and 'FunctionId' not in already_processed:
+            already_processed.add('FunctionId')
+            outfile.write(' FunctionId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.FunctionId), input_name='FunctionId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='FunctionType', fromsubclass_=False, pretty_print=True):
+        super(FunctionType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('FunctionId', node)
+        if value is not None and 'FunctionId' not in already_processed:
+            already_processed.add('FunctionId')
+            self.FunctionId = value
+        super(FunctionType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(FunctionType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class FunctionType
+
+
+class ConditionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, Expression=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.Expression = Expression
+        self.Expression_nsprefix_ = "xacml"
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ConditionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ConditionType.subclass:
+            return ConditionType.subclass(*args_, **kwargs_)
+        else:
+            return ConditionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Expression(self):
+        return self.Expression
+    def set_Expression(self, Expression):
+        self.Expression = Expression
+    def _hasContent(self):
+        if (
+            self.Expression is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ConditionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConditionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ConditionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConditionType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConditionType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ConditionType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ConditionType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Expression is not None:
+            self.Expression.export(outfile, level, namespaceprefix_, namespacedef_='', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Expression':
+            type_name_ = child_.attrib.get(
+                '{http://www.w3.org/2001/XMLSchema-instance}type')
+            if type_name_ is None:
+                type_name_ = child_.attrib.get('type')
+            if type_name_ is not None:
+                type_names_ = type_name_.split(':')
+                if len(type_names_) == 1:
+                    type_name_ = type_names_[0]
+                else:
+                    type_name_ = type_names_[1]
+                class_ = globals()["" + type_name_]
+                obj_ = class_.factory()
+                obj_.build(child_, gds_collector_=gds_collector_)
+            else:
+                raise NotImplementedError(
+                    'Class not implemented for <Expression> element')
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Expression'
+        elif nodeName_ == 'VariableReference':
+            obj_ = VariableReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'VariableReference'
+        elif nodeName_ == 'AttributeSelector':
+            obj_ = AttributeSelectorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeSelector'
+        elif nodeName_ == 'AttributeDesignator':
+            obj_ = AttributeDesignatorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeDesignator'
+        elif nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            obj_ = class_obj_.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'AttributeValue'
+        elif nodeName_ == 'Function':
+            obj_ = FunctionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Function'
+        elif nodeName_ == 'Apply':
+            obj_ = ApplyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Expression = obj_
+            obj_.original_tagname_ = 'Apply'
+# end class ConditionType
+
+
+class ApplyType(ExpressionType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = ExpressionType
+    def __init__(self, FunctionId=None, Description=None, Expression=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("ApplyType"), self).__init__(valueOf_, mixedclass_, content_,  **kwargs_)
+        self.FunctionId = _cast(None, FunctionId)
+        self.FunctionId_nsprefix_ = None
+        self.Description = Description
+        self.Description_nsprefix_ = "xacml"
+        if Expression is None:
+            self.Expression = []
+        else:
+            self.Expression = Expression
+        self.Expression_nsprefix_ = "xacml"
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ApplyType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ApplyType.subclass:
+            return ApplyType.subclass(*args_, **kwargs_)
+        else:
+            return ApplyType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_Description(self):
+        return self.Description
+    def set_Description(self, Description):
+        self.Description = Description
+    def get_Expression(self):
+        return self.Expression
+    def set_Expression(self, Expression):
+        self.Expression = Expression
+    def add_Expression(self, value):
+        self.Expression.append(value)
+    def insert_Expression_at(self, index, value):
+        self.Expression.insert(index, value)
+    def replace_Expression_at(self, index, value):
+        self.Expression[index] = value
+    def get_FunctionId(self):
+        return self.FunctionId
+    def set_FunctionId(self, FunctionId):
+        self.FunctionId = FunctionId
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            self.Description is not None or
+            self.Expression or
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(ApplyType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ApplyType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ApplyType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ApplyType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ApplyType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ApplyType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ApplyType'):
+        super(ApplyType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ApplyType')
+        if self.FunctionId is not None and 'FunctionId' not in already_processed:
+            already_processed.add('FunctionId')
+            outfile.write(' FunctionId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.FunctionId), input_name='FunctionId')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='ApplyType', fromsubclass_=False, pretty_print=True):
+        super(ApplyType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+        if not fromsubclass_:
+            for item_ in self.content_:
+                item_.export(outfile, level, item_.name, namespaceprefix_, pretty_print=pretty_print)
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.Description is not None:
+            namespaceprefix_ = self.Description_nsprefix_ + ':' if (UseCapturedNS_ and self.Description_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sDescription>%s</%sDescription>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Description), input_name='Description')), namespaceprefix_ , eol_))
+        for Expression_ in self.Expression:
+            Expression_.export(outfile, level, namespaceprefix_, namespacedef_='', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('FunctionId', node)
+        if value is not None and 'FunctionId' not in already_processed:
+            already_processed.add('FunctionId')
+            self.FunctionId = value
+        super(ApplyType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'Description' and child_.text is not None:
+            valuestr_ = child_.text
+            valuestr_ = self.gds_parse_string(valuestr_, node, 'Description')
+            valuestr_ = self.gds_validate_string(valuestr_, node, 'Description')
+            obj_ = self.mixedclass_(MixedContainer.CategorySimple,
+                MixedContainer.TypeString, 'Description', valuestr_)
+            self.content_.append(obj_)
+            self.Description_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Expression':
+            type_name_ = child_.attrib.get(
+                '{http://www.w3.org/2001/XMLSchema-instance}type')
+            if type_name_ is None:
+                type_name_ = child_.attrib.get('type')
+            if type_name_ is not None:
+                type_names_ = type_name_.split(':')
+                if len(type_names_) == 1:
+                    type_name_ = type_names_[0]
+                else:
+                    type_name_ = type_names_[1]
+                class_ = globals()["" + type_name_]
+                obj_ = class_.factory()
+                obj_.build(child_, gds_collector_=gds_collector_)
+            else:
+                raise NotImplementedError(
+                    'Class not implemented for <Expression> element')
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'Expression', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_Expression'):
+              self.add_Expression(obj_.value)
+            elif hasattr(self, 'set_Expression'):
+              self.set_Expression(obj_.value)
+        elif nodeName_ == 'VariableReference':
+            obj_ = VariableReferenceType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'VariableReference', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_VariableReference'):
+              self.add_VariableReference(obj_.value)
+            elif hasattr(self, 'set_VariableReference'):
+              self.set_VariableReference(obj_.value)
+        elif nodeName_ == 'AttributeSelector':
+            obj_ = AttributeSelectorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'AttributeSelector', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_AttributeSelector'):
+              self.add_AttributeSelector(obj_.value)
+            elif hasattr(self, 'set_AttributeSelector'):
+              self.set_AttributeSelector(obj_.value)
+        elif nodeName_ == 'AttributeDesignator':
+            obj_ = AttributeDesignatorType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'AttributeDesignator', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_AttributeDesignator'):
+              self.add_AttributeDesignator(obj_.value)
+            elif hasattr(self, 'set_AttributeDesignator'):
+              self.set_AttributeDesignator(obj_.value)
+        elif nodeName_ == 'AttributeValue':
+            class_obj_ = self.get_class_obj_(child_, AttributeValueType)
+            class_obj_ = AttributeValueType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'AttributeValue', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_AttributeValue'):
+              self.add_AttributeValue(obj_.value)
+            elif hasattr(self, 'set_AttributeValue'):
+              self.set_AttributeValue(obj_.value)
+        elif nodeName_ == 'Function':
+            obj_ = FunctionType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'Function', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_Function'):
+              self.add_Function(obj_.value)
+            elif hasattr(self, 'set_Function'):
+              self.set_Function(obj_.value)
+        elif nodeName_ == 'Apply':
+            obj_ = ApplyType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'Apply', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_Apply'):
+              self.add_Apply(obj_.value)
+            elif hasattr(self, 'set_Apply'):
+              self.set_Apply(obj_.value)
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(ApplyType, self)._buildChildren(child_, node, nodeName_, True)
+# end class ApplyType
+
+
+class DecisionType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DecisionType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DecisionType.subclass:
+            return DecisionType.subclass(*args_, **kwargs_)
+        else:
+            return DecisionType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def validate_DecisionType_impl(self, value):
+        result = True
+        # Validate type DecisionType_impl, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Permit', 'Deny', 'Indeterminate', 'NotApplicable']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DecisionType_impl' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='DecisionType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DecisionType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DecisionType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DecisionType')
+        if self._hasContent():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DecisionType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DecisionType'):
+        pass
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='DecisionType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        pass
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class DecisionType
+
+
+class AttributeAssignmentType(AttributeValueType):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = AttributeValueType
+    def __init__(self, DataType=None, anytypeobjs_=None, AttributeId=None, Category=None, Issuer=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = "xacml"
+        super(globals().get("AttributeAssignmentType"), self).__init__(DataType, anytypeobjs_, valueOf_, mixedclass_, content_,  **kwargs_)
+        self.AttributeId = _cast(None, AttributeId)
+        self.AttributeId_nsprefix_ = None
+        self.Category = _cast(None, Category)
+        self.Category_nsprefix_ = None
+        self.Issuer = _cast(None, Issuer)
+        self.Issuer_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AttributeAssignmentType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AttributeAssignmentType.subclass:
+            return AttributeAssignmentType.subclass(*args_, **kwargs_)
+        else:
+            return AttributeAssignmentType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AttributeId(self):
+        return self.AttributeId
+    def set_AttributeId(self, AttributeId):
+        self.AttributeId = AttributeId
+    def get_Category(self):
+        return self.Category
+    def set_Category(self, Category):
+        self.Category = Category
+    def get_Issuer(self):
+        return self.Issuer
+    def set_Issuer(self, Issuer):
+        self.Issuer = Issuer
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def _hasContent(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_ or
+            super(AttributeAssignmentType, self)._hasContent()
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeAssignmentType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AttributeAssignmentType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AttributeAssignmentType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeAssignmentType')
+        if self._hasContent():
+            outfile.write('>%s' % (eol_, ))
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AttributeAssignmentType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AttributeAssignmentType'):
+        super(AttributeAssignmentType, self)._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AttributeAssignmentType')
+        if self.AttributeId is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            outfile.write(' AttributeId=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.AttributeId), input_name='AttributeId')), ))
+        if self.Category is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            outfile.write(' Category=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Category), input_name='Category')), ))
+        if self.Issuer is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            outfile.write(' Issuer=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Issuer), input_name='Issuer')), ))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"', name_='AttributeAssignmentType', fromsubclass_=False, pretty_print=True):
+        super(AttributeAssignmentType, self)._exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self._buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def _buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('AttributeId', node)
+        if value is not None and 'AttributeId' not in already_processed:
+            already_processed.add('AttributeId')
+            self.AttributeId = value
+        value = find_attr_value_('Category', node)
+        if value is not None and 'Category' not in already_processed:
+            already_processed.add('Category')
+            self.Category = value
+        value = find_attr_value_('Issuer', node)
+        if value is not None and 'Issuer' not in already_processed:
+            already_processed.add('Issuer')
+            self.Issuer = value
+        super(AttributeAssignmentType, self)._buildAttributes(node, attrs, already_processed)
+    def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
+        super(AttributeAssignmentType, self)._buildChildren(child_, node, nodeName_, True)
+        pass
+# end class AttributeAssignmentType
+
+
+GDSClassesMapping = {
+    'Advice': AdviceType,
+    'AdviceExpression': AdviceExpressionType,
+    'AdviceExpressions': AdviceExpressionsType,
+    'AllOf': AllOfType,
+    'AnyOf': AnyOfType,
+    'Apply': ApplyType,
+    'AssociatedAdvice': AssociatedAdviceType,
+    'Attribute': AttributeType,
+    'AttributeAssignment': AttributeAssignmentType,
+    'AttributeAssignmentExpression': AttributeAssignmentExpressionType,
+    'AttributeDesignator': AttributeDesignatorType,
+    'AttributeSelector': AttributeSelectorType,
+    'AttributeValue': AttributeValueType,
+    'Attributes': AttributesType,
+    'AttributesReference': AttributesReferenceType,
+    'CombinerParameter': CombinerParameterType,
+    'CombinerParameters': CombinerParametersType,
+    'Condition': ConditionType,
+    'Content': ContentType,
+    'Decision': DecisionType,
+    'Expression': ExpressionType,
+    'Function': FunctionType,
+    'Match': MatchType,
+    'MissingAttributeDetail': MissingAttributeDetailType,
+    'MultiRequests': MultiRequestsType,
+    'Obligation': ObligationType,
+    'ObligationExpression': ObligationExpressionType,
+    'ObligationExpressions': ObligationExpressionsType,
+    'Obligations': ObligationsType,
+    'Policy': PolicyType,
+    'PolicyCombinerParameters': PolicyCombinerParametersType,
+    'PolicyDefaults': DefaultsType,
+    'PolicyIdReference': IdReferenceType,
+    'PolicyIdentifierList': PolicyIdentifierListType,
+    'PolicyIssuer': PolicyIssuerType,
+    'PolicySet': PolicySetType,
+    'PolicySetCombinerParameters': PolicySetCombinerParametersType,
+    'PolicySetDefaults': DefaultsType,
+    'PolicySetIdReference': IdReferenceType,
+    'Request': RequestType,
+    'RequestDefaults': RequestDefaultsType,
+    'RequestReference': RequestReferenceType,
+    'Response': ResponseType,
+    'Result': ResultType,
+    'Rule': RuleType,
+    'RuleCombinerParameters': RuleCombinerParametersType,
+    'Status': StatusType,
+    'StatusCode': StatusCodeType,
+    'StatusDetail': StatusDetailType,
+    'Target': TargetType,
+    'VariableDefinition': VariableDefinitionType,
+    'VariableReference': VariableReferenceType,
+}
+
+
+USAGE_TEXT = """
+Usage: python <Parser>.py [ -s ] <in_xml_file>
+"""
+
+
+def usage():
+    print(USAGE_TEXT)
+    sys.exit(1)
+
+
+def get_root_tag(node):
+    tag = Tag_pattern_.match(node.tag).groups()[-1]
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
+    if rootClass is None:
+        rootClass = globals().get(prefix_tag)
+    return tag, rootClass
+
+
+def get_required_ns_prefix_defs(rootNode):
+    '''Get all name space prefix definitions required in this XML doc.
+    Return a dictionary of definitions and a char string of definitions.
+    '''
+    nsmap = {
+        prefix: uri
+        for node in rootNode.iter()
+        for (prefix, uri) in node.nsmap.items()
+        if prefix is not None
+    }
+    namespacedefs = ' '.join([
+        'xmlns:{}="{}"'.format(prefix, uri)
+        for prefix, uri in nsmap.items()
+    ])
+    return nsmap, namespacedefs
+
+
+def parse(inFileName, silence=False, print_warnings=True):
+    global CapturedNsmap_
+    gds_collector = GdsCollector_()
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RequestType'
+        rootClass = RequestType
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_=namespacedefs,
+            pretty_print=True)
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, reverse_mapping=None, nsmap=None):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RequestType'
+        rootClass = RequestType
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    if mapping is None:
+        mapping = {}
+    if reverse_mapping is None:
+        reverse_mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping,
+        reverse_mapping_=reverse_mapping, nsmap_=nsmap)
+    reverse_node_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    # Enable Python to collect the space used by the DOM.
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        content = etree_.tostring(
+            rootElement, pretty_print=True,
+            xml_declaration=True, encoding="utf-8")
+        sys.stdout.write(str(content))
+        sys.stdout.write('\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj, rootElement, mapping, reverse_node_mapping
+
+
+def parseString(inString, silence=False, print_warnings=True):
+    '''Parse a string, create the object tree, and export it.
+
+    Arguments:
+    - inString -- A string.  This XML fragment should not start
+      with an XML declaration containing an encoding.
+    - silence -- A boolean.  If False, export the object.
+    Returns -- The root object in the tree.
+    '''
+    parser = None
+    rootNode= parsexmlstring_(inString, parser)
+    gds_collector = GdsCollector_()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RequestType'
+        rootClass = RequestType
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    if not SaveElementTreeNode:
+        rootNode = None
+    if not silence:
+        sys.stdout.write('<?xml version="1.0" ?>\n')
+        rootObj.export(
+            sys.stdout, 0, name_=rootTag,
+            namespacedef_='xmlns:xacml="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def parseLiteral(inFileName, silence=False, print_warnings=True):
+    parser = None
+    doc = parsexml_(inFileName, parser)
+    gds_collector = GdsCollector_()
+    rootNode = doc.getroot()
+    rootTag, rootClass = get_root_tag(rootNode)
+    if rootClass is None:
+        rootTag = 'RequestType'
+        rootClass = RequestType
+    rootObj = rootClass.factory()
+    rootObj.build(rootNode, gds_collector_=gds_collector)
+    # Enable Python to collect the space used by the DOM.
+    if not SaveElementTreeNode:
+        doc = None
+        rootNode = None
+    if not silence:
+        sys.stdout.write('#from representation import *\n\n')
+        sys.stdout.write('import representation as model_\n\n')
+        sys.stdout.write('rootObj = model_.rootClass(\n')
+        rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
+        sys.stdout.write(')\n')
+    if print_warnings and len(gds_collector.get_messages()) > 0:
+        separator = ('-' * 50) + '\n'
+        sys.stderr.write(separator)
+        sys.stderr.write('----- Warnings -- count: {} -----\n'.format(
+            len(gds_collector.get_messages()), ))
+        gds_collector.write_messages(sys.stderr)
+        sys.stderr.write(separator)
+    return rootObj
+
+
+def main():
+    args = sys.argv[1:]
+    if len(args) == 1:
+        parse(args[0])
+    else:
+        usage()
+
+
+if __name__ == '__main__':
+    #import pdb; pdb.set_trace()
+    main()
+
+RenameMappings_ = {
+}
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {'http://www.w3.org/XML/1998/namespace': [],
+ 'urn:oasis:names:tc:xacml:3.0:core:schema:wd-17': [('DecisionType',
+                                                     'xacml3v17.xsd',
+                                                     'ST'),
+                                                    ('EffectType',
+                                                     'xacml3v17.xsd',
+                                                     'ST'),
+                                                    ('VersionType',
+                                                     'xacml3v17.xsd',
+                                                     'ST'),
+                                                    ('VersionMatchType',
+                                                     'xacml3v17.xsd',
+                                                     'ST'),
+                                                    ('RequestType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('RequestDefaultsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ResponseType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ContentType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ResultType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicyIdentifierListType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('StatusType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('StatusCodeType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('StatusDetailType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('MissingAttributeDetailType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributesType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('MultiRequestsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('RequestReferenceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributesReferenceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ObligationsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AssociatedAdviceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ObligationType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AdviceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeAssignmentType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ObligationExpressionsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AdviceExpressionsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ObligationExpressionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AdviceExpressionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeAssignmentExpressionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicySetType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicyIssuerType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('CombinerParametersType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('CombinerParameterType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('RuleCombinerParametersType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicyCombinerParametersType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicySetCombinerParametersType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('DefaultsType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('IdReferenceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('PolicyType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('RuleType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('TargetType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AnyOfType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AllOfType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('MatchType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('VariableDefinitionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ExpressionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('VariableReferenceType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeSelectorType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeDesignatorType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('AttributeValueType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('FunctionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ConditionType',
+                                                     'xacml3v17.xsd',
+                                                     'CT'),
+                                                    ('ApplyType',
+                                                     'xacml3v17.xsd',
+                                                     'CT')]}
+
+__all__ = [
+    "AdviceExpressionType",
+    "AdviceExpressionsType",
+    "AdviceType",
+    "AllOfType",
+    "AnyOfType",
+    "ApplyType",
+    "AssociatedAdviceType",
+    "AttributeAssignmentExpressionType",
+    "AttributeAssignmentType",
+    "AttributeDesignatorType",
+    "AttributeSelectorType",
+    "AttributeType",
+    "AttributeValueType",
+    "AttributesReferenceType",
+    "AttributesType",
+    "CombinerParameterType",
+    "CombinerParametersType",
+    "ConditionType",
+    "ContentType",
+    "DecisionType",
+    "DefaultsType",
+    "ExpressionType",
+    "FunctionType",
+    "IdReferenceType",
+    "MatchType",
+    "MissingAttributeDetailType",
+    "MultiRequestsType",
+    "ObligationExpressionType",
+    "ObligationExpressionsType",
+    "ObligationType",
+    "ObligationsType",
+    "PolicyCombinerParametersType",
+    "PolicyIdentifierListType",
+    "PolicyIssuerType",
+    "PolicySetCombinerParametersType",
+    "PolicySetType",
+    "PolicyType",
+    "RequestDefaultsType",
+    "RequestReferenceType",
+    "RequestType",
+    "ResponseType",
+    "ResultType",
+    "RuleCombinerParametersType",
+    "RuleType",
+    "StatusCodeType",
+    "StatusDetailType",
+    "StatusType",
+    "TargetType",
+    "VariableDefinitionType",
+    "VariableReferenceType"
+]
