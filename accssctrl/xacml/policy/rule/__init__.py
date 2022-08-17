@@ -1,1 +1,0 @@
-from .combining import RuleCombiningAlgorithm
