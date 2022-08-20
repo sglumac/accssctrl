@@ -1,4 +1,5 @@
-from .representation import PolicySetType, RequestType, ResponseType
+from . import representation
+from .representation.representation import PolicySetType, RequestType, ResponseType
 
 
 def pdp(policyXml: PolicySetType, requestXml: RequestType) -> ResponseType:

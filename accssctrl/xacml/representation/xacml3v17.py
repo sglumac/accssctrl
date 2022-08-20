@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Aug 10 21:37:20 2022 by generateDS.py version 2.40.13.
-# Python 3.8.10 (default, Mar 15 2022, 12:22:08)  [GCC 9.4.0]
+# Generated Sat Aug 20 12:59:03 2022 by generateDS.py version 2.40.13.
+# Python 3.10.6 (main, Aug  3 2022, 10:13:24) [GCC 10.2.1 20210110]
 #
 # Command line options:
-#   ('-o', 'representation.py')
+#   ('-o', 'xacml3v17.py')
 #
 # Command line arguments:
-#   /home/sglumac/accssctrl/accssctrl/xacml/xacml3v17.xsd
+#   /workspaces/accssctrl/accssctrl/xacml/representation/xacml3v17.xsd
 #
 # Command line:
-#   /home/sglumac/.local/bin/generateDS.py -o "representation.py" /home/sglumac/accssctrl/accssctrl/xacml/xacml3v17.xsd
+#   /usr/local/bin/generateDS.py -o "xacml3v17.py" /workspaces/accssctrl/accssctrl/xacml/representation/xacml3v17.xsd
 #
 # Current working directory (os.getcwd()):
-#   xacml
+#   representation
 #
 
 import sys
@@ -8000,8 +8000,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from representation import *\n\n')
-        sys.stdout.write('import representation as model_\n\n')
+        sys.stdout.write('#from xacml3v17 import *\n\n')
+        sys.stdout.write('import xacml3v17 as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')

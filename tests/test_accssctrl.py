@@ -5,9 +5,14 @@
 
 import unittest
 
-from accssctrl import accssctrl
+from accssctrl.xacml.representation.representation import PolicyType
 
 
+
+class TestExample1(unittest.TestCase):
+    def test_load_policy(self):
+        pass
+        
 class TestAccssctrl(unittest.TestCase):
     """Tests for `accssctrl` package."""
 
