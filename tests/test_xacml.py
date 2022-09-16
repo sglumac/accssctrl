@@ -1,6 +1,6 @@
 import unittest
 from os import path
-from accssctrl.xacml import Pdp
+from accssctrl.xacml import find_decision, process_request
 from accssctrl.xacml.representation import xacml3v17
 
 
@@ -27,7 +27,7 @@ class TestXacml(unittest.TestCase):
         request = xacml3v17.parse(request1())
         expectedResponse = xacml3v17.parse(response1())
         expectedDecision = expectedResponse.Result[0].Decision.get_valueOf_()
-        pdp = Pdp(policy)
-        actualResponse = pdp(policy, request)
+        attributes = process_request(request)
+        actualResponse = find_decision(policy, attributes)
         actualDecision = actualResponse.Result[0].Decision.get_valueOf_()
         print(policy)
