@@ -30,3 +30,4 @@ class TestXacml(unittest.TestCase):
         responseInfo = process_request(request)
         actualResponse = find_decision(policy, responseInfo['attributes'])
         actualDecision = actualResponse.Result[0].Decision.get_valueOf_()
+        self.assertEqual(expectedDecision, actualDecision)

@@ -2,8 +2,16 @@ from enum import Enum, auto
 from functools import reduce
 import math
 from typing import Dict
-from accssctrl.xacml.representation.xacml3v17 import PolicySetType, RequestType, ResponseType
+from unittest import result
+from accssctrl.xacml.representation.xacml3v17 import DecisionType, PolicySetType, RequestType, ResponseType, ResultType
 from . import representation, match
+
+
+class Authorization(Enum):
+    Permit = "Permit"
+    Deny = "Deny"
+    Indeterminate = "Indeterminate"
+    NotApplicable = "NotApplicable"
 
 
 def process_request(requestXml: RequestType) -> Dict:
@@ -95,4 +103,6 @@ def find_decision(policyXml: PolicySetType, attributes: Dict) -> ResponseType:
         conditionResult = ConditionValue.True_
         ruleResult = targetResult if conditionResult == ConditionValue.True_ else None
         break
-    return ruleResult
+    authorization = Authorization.NotApplicable
+    response = ResponseType([ResultType(DecisionType(authorization.value))])
+    return response
